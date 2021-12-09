@@ -40,22 +40,17 @@ except FileNotFoundError:
 
 # TODO: Update these values according to the name of the module.
 setup(
-    name="blueprint",
-    version=read_version("blueprint/__init__.py"),  # single place for version
-    description="Installable blueprint package. Modify as needed.",
+    name="interpret_tcr_binding",
+    version=read_version("intcr/__init__.py"),  # single place for version
+    description="Globalizing Anchor explanation for TCRs via clustering",
     long_description=open("README.md").read(),
-    url="https://github.ibm.com/CHCLS/blueprint-python-package",
-    author="Antonio Foncubierta Rodríguez, Matteo Manica, Joris Cadow",
-    author_email="fra@zurich.ibm.com, tte@zurich.ibm.com, dow@zurich.ibm.com",
+    url="https://github.ibm.com/SysBio/interpret_tcr",
+    author="An-phi Nguyen, Iliana Papadopoulou, Anna Maria Weber",
+    author_email="uye@zurich.ibm.com, ipa@zurich.ibm.com, wbr@zurich.ibm.com",
     # the following exclusion is to prevent shipping of tests.
     # if you do include them, add pytest to the required packages.
     packages=find_packages(".", exclude=["*tests*"]),
-    package_data={"blueprint": ["py.typed"]},
-    entry_points="""
-        [console_scripts]
-        salutation=blueprint.complex_module.core:formal_introduction
-    """,
-    scripts=["bin/brief_salutation", "bin/a_shell_script"],
+    scripts=["bin/run_interpretability_pipeline"],
     extras_require={
         "vcs": VCS_REQUIREMENTS,
         "test": ["pytest", "pytest-cov"],
@@ -80,6 +75,5 @@ setup(
         # versions should be very loose here, just exclude unsuitable versions
         # because your dependencies also have dependencies and so on ...
         # being too strict here will make dependency resolution harder
-        "click",
     ],
 )
