@@ -1,0 +1,20 @@
+import argparse
+
+
+def run_pipeline(config):
+    # 0. preparation
+    # - load model
+    # - load data
+    # - split samples in 'predicted as binding' and 'predicted as non-binding'
+
+    # 1. clustering
+    # - preprocessing
+    # - clustering
+    # - (optional) clustering visualization and analysis
+
+    # 2.
+    pass
+
+
+if __name__ == '__main__':
+    pass
