@@ -1,20 +1,54 @@
-import argparse
+import argparse, torch
+from intcr.models import MODEL_LOADERS, MODEL_CONFIG_KEY, MODEL_NAME_KEY, MODEL_PARAMS_KEY
+from intcr.data import DATASET_GETTERS, DATASET_KEY, DATASET_PARAMS_KEY
+from intcr.pipeline.processing import split_bind_nonbind
+from intcr.pipeline.config import EXPERIMENT_ROOT_KEY
+from intcr.pipeline.environment import \
+    setup_folder, setup_preparation_root, \
+    retrieve_prepared_data, save_prepared_data
 
 
-def run_pipeline(config):
+def run_pipeline(config, step2recompute=0):
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+
+    root = config[EXPERIMENT_ROOT_KEY]
+    setup_folder(root)
+
     # 0. preparation
-    # - load model
-    # - load data
-    # - split samples in 'predicted as binding' and 'predicted as non-binding'
+    preparation_step_root, already_prepared = setup_preparation_root(root)
+    batch_size = config.get('batch_size', None)
+    if (step2recompute > 0) and already_prepared:
+        split_samples = retrieve_prepared_data(preparation_step_root)
+    else:
+        # - load model
+        model_config = MODEL_LOADERS[MODEL_CONFIG_KEY]
+        model_name = model_config[MODEL_NAME_KEY]
+        model_params = model_config[MODEL_PARAMS_KEY]
+        model = MODEL_LOADERS[model_name](model_params, device=device)
+        # - load data
+        dataset_name = config[DATASET_KEY]
+        dataset_params = config[DATASET_PARAMS_KEY]
+        dataset = DATASET_GETTERS[dataset_name](**dataset_params)
+        # - split samples in 'predicted as binding' and 'predicted as non-binding'
+        split_samples = split_bind_nonbind(dataset, model, batch_size)
+        save_prepared_data(preparation_step_root, split_samples)
 
     # 1. clustering
     # - preprocessing
     # - clustering
     # - (optional) clustering visualization and analysis
 
-    # 2.
+    # 2. anchors-explanation
     pass
 
 
 if __name__ == '__main__':
-    pass
+    parser = argparse.ArgumentParser(
+        prog='Global Anchor-based Interpretability for TCR binding models',
+        description='' # TODO
+    )
+    parser.add_argument('--config', help='Path to the config file for the pipeline parameters.', required=True)
+    parser.add_argument('--step2recompute', type=int,
+                        help='Step to recompute. (0) Data preparation, (1) Clustering, (2) Explanation. Default: 0. '
+                             'All the steps after the one defined will also be recomputed!',
+                        required=False, default=0)
