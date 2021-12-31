@@ -1,5 +1,6 @@
 import torch
 import inspect
+import numpy as np
 from pytoda.proteins import ProteinFeatureLanguage
 from pytoda.smiles import SMILESLanguage
 from pytoda.datasets import DrugAffinityDataset
@@ -93,16 +94,28 @@ def get_aa_tcr_dataset(data_params, device=torch.device('cpu')):
 
     # create dataset
     dataset = DrugAffinityDataset(
-        drug_affinity_filepath = affinity_filepath,
-        smi_filepath = pep_filepath,
-        protein_filepath = protein_filepath,
-        smiles_language = smiles_language,
-        protein_language = protein_language,
+        drug_affinity_filepath=affinity_filepath,
+        smi_filepath=pep_filepath,
+        protein_filepath=protein_filepath,
+        smiles_language=smiles_language,
+        protein_language=protein_language,
         **(_get_parameters(DrugAffinityDataset, setup_params)),
         device=device
     )
 
     return dataset
 
+
+def blosum2index_drugaffinity_ds(samples, model, dataset):
+    """
+    Turn blosum encoded samples to indeces of an alphabet provided through a DrugAffinity dataset
+
+    Args:
+        samples (np.array): samples to convert
+        model: unused. Kept to follow a common interface of transforms
+        dataset (DrugAffinityDataset): dataset with info to convert from blosum to protein indeces
+    """
+    language = dataset.protein_sequence_dataset.protein_language
+    for s in samples:
 
 
