@@ -5,10 +5,17 @@ from intcr.pipeline.processing import split_bind_nonbind
 from intcr.pipeline.config import EXPERIMENT_ROOT_KEY
 from intcr.pipeline.environment import \
     setup_folder, setup_preparation_root, \
-    retrieve_prepared_data, save_prepared_data
+    retrieve_prepared_data, save_prepared_data, setup_clustering_root, setup_explainer_root
+from intcr.clustering import CLUSTERING_KEY, PRECLUST_TRANSFORM_KEY, CLUSTERING_ALGOS_KEY, CONSENSUS_KEY, \
+    SELECTION_KEY, VISUALIZATION_KEY
+from intcr.clustering.preprocessing import pre_clustering_transform
+from intcr.clustering.clustering import clustering, consensus_clustering, select_best_clustering, visualize_clusters
+from intcr.explain.anchors import generate_anchors
+from intcr.explain import EXPLAINER_KEY, ANCHORS_KEY
+from copy import deepcopy
 
 
-def run_pipeline(config, step2recompute=0):
+def run_pipeline(config, step2recompute=100):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
 
     root = config[EXPERIMENT_ROOT_KEY]
@@ -17,29 +24,67 @@ def run_pipeline(config, step2recompute=0):
     # 0. preparation
     preparation_step_root, already_prepared = setup_preparation_root(root)
     batch_size = config.get('batch_size', None)
+    # - load model
+    model_config = config[MODEL_CONFIG_KEY]
+    model_name = model_config[MODEL_NAME_KEY]
+    model_params = model_config[MODEL_PARAMS_KEY]
+    model = MODEL_LOADERS[model_name](model_params, device=device)
+    # - load data
+    dataset_name = config[DATASET_KEY]
+    dataset_params = config[DATASET_PARAMS_KEY]
+    dataset = DATASET_GETTERS[dataset_name](**dataset_params)
+
     if (step2recompute > 0) and already_prepared:
         split_samples = retrieve_prepared_data(preparation_step_root)
     else:
-        # - load model
-        model_config = MODEL_LOADERS[MODEL_CONFIG_KEY]
-        model_name = model_config[MODEL_NAME_KEY]
-        model_params = model_config[MODEL_PARAMS_KEY]
-        model = MODEL_LOADERS[model_name](model_params, device=device)
-        # - load data
-        dataset_name = config[DATASET_KEY]
-        dataset_params = config[DATASET_PARAMS_KEY]
-        dataset = DATASET_GETTERS[dataset_name](**dataset_params)
         # - split samples in 'predicted as binding' and 'predicted as non-binding'
         split_samples = split_bind_nonbind(dataset, model, batch_size)
         save_prepared_data(preparation_step_root, split_samples)
 
-    # 1. clustering
+    # 1. Clustering
+    clustering_config = config[CLUSTERING_KEY]
+    preclustering_root, clustering_results_root = setup_clustering_root(root)
     # - preprocessing
+    # - - transform data
+    pre_cluster_transform_config = clustering_config[PRECLUST_TRANSFORM_KEY]
+    pre_clustering_transform(preclustering_root, pre_cluster_transform_config, split_samples, model, dataset,
+                             recompute=(step2recompute <= 1))
     # - clustering
-    # - (optional) clustering visualization and analysis
+    # --
+    clustering_algos_config = clustering_config[CLUSTERING_ALGOS_KEY]
+    cluster_centers, cluster_assignments = clustering(clustering_results_root, preclustering_root,
+                                                      clustering_algos_config, split_samples,
+                                                      recompute=(step2recompute <= 2))
+    # -- consensus
+    consensus_config = clustering_config.get(CONSENSUS_KEY, [])
+    consensus_assignments = consensus_clustering(clustering_results_root, cluster_assignments, consensus_config,
+                                                 recompute=(step2recompute <= 3))
 
-    # 2. anchors-explanation
-    pass
+    # -- put results together
+    assignments = deepcopy(cluster_assignments)
+    assignments.update(consensus_assignments)
+
+    # -- clustering visualization and comparison
+    visual_config = clustering_config[VISUALIZATION_KEY]
+    visualize_clusters(assignments, clustering_results_root, preclustering_root, visual_config, split_samples,
+                       recompute=(step2recompute <= 4))
+    # -- select best clustering method
+    clustering_selection_config = clustering_config[SELECTION_KEY]
+    best_clustering = select_best_clustering(assignments, clustering_results_root, preclustering_root,
+                                             clustering_selection_config, split_samples,
+                                             recompute=(step2recompute <= 5))
+
+    # 2. Anchors
+    explainer_config = config[EXPLAINER_KEY]
+    explainer_root = setup_explainer_root(root)
+    # - compute anchors
+    anchors_config = explainer_config[ANCHORS_KEY]
+    anchors = generate_anchors(assignments, cluster_centers, best_clustering, anchors_config, preclustering_root,
+                               explainer_root, model, dataset, split_samples, recompute=(step2recompute <= 6))
+    # - visualize anchors
+    # visualize_anchors(anchors, anchors_config, dataset, split_samples, recompute=(step2recompute <= 7))
+    # - evaluate anchors
+    # evaluate_anchors(anchors, model)
 
 
 if __name__ == '__main__':
@@ -49,6 +94,15 @@ if __name__ == '__main__':
     )
     parser.add_argument('--config', help='Path to the config file for the pipeline parameters.', required=True)
     parser.add_argument('--step2recompute', type=int,
-                        help='Step to recompute. (0) Data preparation, (1) Clustering, (2) Explanation. Default: 0. '
+                        help='Step to recompute.\\'
+                             '(0) Data preparation\\ '
+                             '(1) Pre-processing\\'
+                             '(2) Clustering\\'
+                             '(3) Consensus clustering\\ '
+                             '(4) Cluster Visualization\\'
+                             '(5) Best Clustering selection\\'
+                             '(6) Anchor explanations\\'
+                             '(7) Visualize anchors'
+                             'Default: 100 (no re-computation).'
                              'All the steps after the one defined will also be recomputed!',
-                        required=False, default=0)
+                        required=False, default=100)
