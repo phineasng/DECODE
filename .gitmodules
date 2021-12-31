@@ -4,3 +4,6 @@
 [submodule "intcr/extern/pytoda"]
 	path = intcr/extern/pytoda
 	url = git@github.com:PaccMann/paccmann_datasets.git
+[submodule "extern/TITAN"]
+	path = extern/TITAN
+	url = https://github.com/PaccMann/TITAN.git
