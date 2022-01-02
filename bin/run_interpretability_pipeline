@@ -1,4 +1,4 @@
-import argparse, torch
+import argparse, torch, json
 from intcr.models import MODEL_LOADERS, MODEL_CONFIG_KEY, MODEL_NAME_KEY, MODEL_PARAMS_KEY
 from intcr.data import DATASET_GETTERS, DATASET_KEY, DATASET_PARAMS_KEY
 from intcr.pipeline.processing import split_bind_nonbind
@@ -15,8 +15,11 @@ from intcr.explain import EXPLAINER_KEY, ANCHORS_KEY
 from copy import deepcopy
 
 
-def run_pipeline(config, step2recompute=100):
+def run_pipeline(config_fpath, step2recompute=100):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    with open(config_fpath, 'r') as in_config:
+        config = json.load(in_config)
+
 
     root = config[EXPERIMENT_ROOT_KEY]
     setup_folder(root)
