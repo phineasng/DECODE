@@ -1,4 +1,5 @@
 {
+  "root": "/dccstor/kme/repos/interpret_tcr/results/test",
   "model": {
     "model_id": "titan",
     "model_params": {

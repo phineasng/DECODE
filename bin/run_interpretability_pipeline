@@ -106,3 +106,6 @@ if __name__ == '__main__':
                              'Default: 100 (no re-computation).'
                              'All the steps after the one defined will also be recomputed!',
                         required=False, default=100)
+
+    args = parser.parse_args()
+    run_pipeline(args.config, args.step2recompute)
