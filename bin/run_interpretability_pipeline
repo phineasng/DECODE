@@ -37,7 +37,7 @@ def run_pipeline(config_fpath, step2recompute=100, verbose=False):
     dataset_config = config[DATASET_CONFIG_KEY]
     dataset_name = dataset_config[DATASET_KEY]
     dataset_params = dataset_config[DATASET_PARAMS_KEY]
-    dataset = DATASET_GETTERS[dataset_name](**dataset_params)
+    dataset = DATASET_GETTERS[dataset_name](dataset_params)
 
     if (step2recompute > 0) and already_prepared:
         split_samples = retrieve_prepared_data(preparation_step_root)
