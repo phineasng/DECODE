@@ -22,10 +22,17 @@
   "dataset": {
     "dataset_id": "tcr_affinity_smile",
     "dataset_params": {
-      "augment_smiles": false, "smiles_canonical": false, "ligand_start_stop_token": true,
-      "receptor_start_stop_token": true, "ligand_padding_length": 500, "receptor_padding_length": 500,
-      "ligand_embedding": "learned", "receptor_embedding": "predefined", "predefined_embedding": "blosum",
-      "ligand_vocabulary_size": 571, "receptor_vocabulary_size": 28, "ligand_as": "smiles"
+      "protein_language_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/protein_language.pkl",
+      "affinity_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/Interaction_file_train_reduced.csv",
+      "pep_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/epitopes.smi",
+      "protein_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/Input_TITAN_full_sequence.csv",
+      "smile_language_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/smiles_language.pkl",
+      "setup_params": {
+        "augment_smiles": false, "smiles_canonical": false, "ligand_start_stop_token": true,
+        "receptor_start_stop_token": true, "ligand_padding_length": 500, "receptor_padding_length": 500,
+        "ligand_embedding": "learned", "receptor_embedding": "predefined", "predefined_embedding": "blosum",
+        "ligand_vocabulary_size": 571, "receptor_vocabulary_size": 28, "ligand_as": "smiles"
+      }
     }
   }
 }
