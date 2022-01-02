@@ -4,6 +4,7 @@ import numpy as np
 from pytoda.proteins import ProteinFeatureLanguage
 from pytoda.smiles import SMILESLanguage
 from pytoda.datasets import DrugAffinityDataset
+from copy import deepcopy
 
 
 AA_LANG_KEY = 'protein_language_fpath'
@@ -40,28 +41,28 @@ def _filldefault_and_rename_params(setup_params):
         'smiles_start_stop_token': True,
 
         # drug affinity dataset
-        'smiles_add_start_stop': True,
+        'smiles_add_start_and_stop': True,
         'smiles_padding': True,
         'smiles_padding_length': 500,
         'smiles_augment': False,
         'smiles_canonical': False,
         'smiles_kekulize': False,
-        'smiles_bonds_explicit': False,
+        'smiles_all_bonds_explicit': False,
         'smiles_all_hs_explicit': False,
         'smiles_remove_bonddir': False,
         'smiles_remove_chirality': False,
-        'selfies': False,
+        'smiles_selfies': False,
         'protein_amino_acid_dict': 'iupac',
         'protein_padding': True,
         'protein_padding_length': None,
-        'protein_add_start_stop': True,
+        'protein_add_start_and_stop': True,
         'protein_augment_by_revert': False,
         'drug_affinity_dtype': torch.float,
         'backend': 'eager'
 
     }
     default_params.update(setup_params)
-    default_params = _map_dict_keys(default_params)
+    #default_params = _map_dict_keys(default_params)
 
     default_params['padding'] = default_params['smiles_padding']
     default_params['padding_length'] = default_params['smiles_padding_length']
@@ -73,6 +74,26 @@ def _get_parameters(fn, params):
     args = inspect.getfullargspec(fn)[0]
     fn_params = {k: params[k] for k in args if k in params}
     return fn_params
+
+
+def _select_params_for_affinity_ds(params):
+    ds_params = deepcopy(params)
+    ds_params.pop('randomize')
+    ds_params.pop('smiles_start_stop_token')
+    ds_params.pop('augment_smiles')
+    ds_params.pop('ligand_start_stop_token')
+    ds_params.pop('receptor_start_stop_token')
+    ds_params.pop('ligand_padding_length')
+    ds_params.pop('receptor_padding_length')
+    ds_params.pop('ligand_embedding')
+    ds_params.pop('receptor_embedding')
+    ds_params.pop('predefined_embedding')
+    ds_params.pop('ligand_vocabulary_size')
+    ds_params.pop('receptor_vocabulary_size')
+    ds_params.pop('ligand_as')
+    ds_params.pop('padding')
+    ds_params.pop('padding_length')
+    return ds_params
 
 
 def get_aa_tcr_dataset(data_params, device=torch.device('cpu')):
@@ -99,7 +120,7 @@ def get_aa_tcr_dataset(data_params, device=torch.device('cpu')):
         protein_filepath=protein_filepath,
         smiles_language=smiles_language,
         protein_language=protein_language,
-        **(_get_parameters(DrugAffinityDataset, setup_params)),
+        **_select_params_for_affinity_ds(setup_params),
         device=device
     )
 
