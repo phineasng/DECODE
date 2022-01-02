@@ -1,6 +1,6 @@
 import argparse, torch, json
 from intcr.models import MODEL_LOADERS, MODEL_CONFIG_KEY, MODEL_NAME_KEY, MODEL_PARAMS_KEY
-from intcr.data import DATASET_GETTERS, DATASET_KEY, DATASET_PARAMS_KEY
+from intcr.data import DATASET_CONFIG_KEY, DATASET_GETTERS, DATASET_KEY, DATASET_PARAMS_KEY
 from intcr.pipeline.processing import split_bind_nonbind
 from intcr.pipeline.config import EXPERIMENT_ROOT_KEY
 from intcr.pipeline.environment import \
@@ -15,11 +15,11 @@ from intcr.explain import EXPLAINER_KEY, ANCHORS_KEY
 from copy import deepcopy
 
 
-def run_pipeline(config_fpath, step2recompute=100):
+def run_pipeline(config_fpath, step2recompute=100, verbose=False):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     with open(config_fpath, 'r') as in_config:
         config = json.load(in_config)
-
+    print(config)
 
     root = config[EXPERIMENT_ROOT_KEY]
     setup_folder(root)
@@ -32,9 +32,11 @@ def run_pipeline(config_fpath, step2recompute=100):
     model_name = model_config[MODEL_NAME_KEY]
     model_params = model_config[MODEL_PARAMS_KEY]
     model = MODEL_LOADERS[model_name](model_params, device=device)
+    print(model)
     # - load data
-    dataset_name = config[DATASET_KEY]
-    dataset_params = config[DATASET_PARAMS_KEY]
+    dataset_config = config[DATASET_CONFIG_KEY]
+    dataset_name = dataset_config[DATASET_KEY]
+    dataset_params = dataset_config[DATASET_PARAMS_KEY]
     dataset = DATASET_GETTERS[dataset_name](**dataset_params)
 
     if (step2recompute > 0) and already_prepared:

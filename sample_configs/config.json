@@ -18,5 +18,14 @@
         "receptor_vocabulary_size": 28, "ligand_as": "smiles", "number_of_parameters": 2216491},
       "ckpt": "/dccstor/kme/repos/interpret_tcr/data/titan_model/smi_full_fold1_published_code/weights/best_ROC-AUC_bimodal_mca.pt"
     }
+  },
+  "dataset": {
+    "dataset_id": "tcr_affinity_smile",
+    "dataset_params": {
+      "augment_smiles": false, "smiles_canonical": false, "ligand_start_stop_token": true,
+      "receptor_start_stop_token": true, "ligand_padding_length": 500, "receptor_padding_length": 500,
+      "ligand_embedding": "learned", "receptor_embedding": "predefined", "predefined_embedding": "blosum",
+      "ligand_vocabulary_size": 571, "receptor_vocabulary_size": 28, "ligand_as": "smiles"
+    }
   }
 }
