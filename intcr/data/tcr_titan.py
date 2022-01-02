@@ -117,5 +117,5 @@ def blosum2index_drugaffinity_ds(samples, model, dataset):
     """
     language = dataset.protein_sequence_dataset.protein_language
     for s in samples:
-
+        pass
 
