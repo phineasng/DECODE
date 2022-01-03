@@ -23,15 +23,24 @@ def pre_clustering_transform(precluster_root, config, split_samples, model, data
     if isinstance(config, dict):
         config = [config]
 
-    for cfg in config:
+    def generate_preprocessing_instance(configs, splits):
+        for cfg in configs:
+            for split in splits.keys():
+                yield cfg, split
+
+    def parallelizable_fn(root, cfg, split, samples, recomp_flag):
         check_pre_cluster_transform_config(cfg)
 
         transform_fn_name = cfg[PRE_CLUSTER_TRANSFORM_FN_KEY]
         output_type = cfg[PRE_CLUSTER_TRANSFORM_OUTPUT_ID]
 
-        out_fpath = os.path.join(precluster_root, output_type)
+        out_fpath = os.path.join(root, output_type)
 
-        if recompute or not os.path.exists(out_fpath):
+        if recomp_flag or not os.path.exists(out_fpath):
             transform_fn = PRE_CLUSTER_TRANSFORM_REGISTRY[transform_fn_name]
-            transformed_samples = transform_fn(split_samples, model, dataset)
+            transformed_samples = transform_fn(samples[split])
             save_data(out_fpath, transformed_samples)
+
+    # to rewrite for parallelization
+    for c, s in generate_preprocessing_instance(config, split_samples):
+        parallelizable_fn(precluster_root, c, s, split_samples, recompute)
