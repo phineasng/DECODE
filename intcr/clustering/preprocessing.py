@@ -34,7 +34,7 @@ def pre_clustering_transform(precluster_root, config, split_samples, model, data
         transform_fn_name = cfg[PRE_CLUSTER_TRANSFORM_FN_KEY]
         output_type = cfg[PRE_CLUSTER_TRANSFORM_OUTPUT_ID]
 
-        out_fpath = os.path.join(root, output_type)
+        out_fpath = os.path.join(root, output_type + '_{}'.format(split))
 
         if recomp_flag or not os.path.exists(out_fpath):
             transform_fn = PRE_CLUSTER_TRANSFORM_REGISTRY[transform_fn_name]

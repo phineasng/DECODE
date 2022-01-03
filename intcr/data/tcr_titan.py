@@ -1,7 +1,7 @@
 import torch
 import numpy as np
 from Levenshtein import distance as lev_dist
-from scipy.spatial.distance import pdist
+from scipy.spatial.distance import pdist, squareform
 from pytoda.proteins import ProteinFeatureLanguage
 from pytoda.smiles import SMILESLanguage
 from pytoda.datasets import DrugAffinityDataset
@@ -144,5 +144,5 @@ def blosum2levenshtein(samples):
         samples (np.array): samples to convert
     """
     flatten_samples = samples.reshape(len(samples), -1)
-    return pdist(flatten_samples, metric=_flattenblosumembedding2levenshtein)
+    return squareform(pdist(flatten_samples, metric=_flattenblosumembedding2levenshtein))
 
