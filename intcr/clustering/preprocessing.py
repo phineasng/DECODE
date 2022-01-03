@@ -5,6 +5,7 @@ import os
 from intcr.pipeline.config import simple_key_check
 from intcr.pipeline.utils import save_data
 from intcr.clustering import PRE_CLUSTER_TRANSFORM_REGISTRY
+from intcr.pipeline.utils import make_split_name
 
 
 PRE_CLUSTER_TRANSFORM_FN_KEY = 'transform_fn'
@@ -34,7 +35,7 @@ def pre_clustering_transform(precluster_root, config, split_samples, model, data
         transform_fn_name = cfg[PRE_CLUSTER_TRANSFORM_FN_KEY]
         output_type = cfg[PRE_CLUSTER_TRANSFORM_OUTPUT_ID]
 
-        out_fpath = os.path.join(root, output_type + '_{}'.format(split))
+        out_fpath = os.path.join(root, make_split_name(output_type, split))
 
         if recomp_flag or not os.path.exists(out_fpath):
             transform_fn = PRE_CLUSTER_TRANSFORM_REGISTRY[transform_fn_name]

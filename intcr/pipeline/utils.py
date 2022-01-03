@@ -29,3 +29,7 @@ def retrieve_input(config, folder, dict_key, split_samples):
         input_type = config[dict_key]
         inputs = _retrieve_input(folder, input_type)
     return inputs, input_type
+
+
+def make_split_name(base_name, split):
+    return base_name + '_{}'.format(split)
