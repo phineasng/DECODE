@@ -32,18 +32,18 @@ def run_pipeline(config_fpath, step2recompute=100, verbose=False):
     model_name = model_config[MODEL_NAME_KEY]
     model_params = model_config[MODEL_PARAMS_KEY]
     model = MODEL_LOADERS[model_name](model_params, device=device)
-    print(model)
+
     # - load data
     dataset_config = config[DATASET_CONFIG_KEY]
     dataset_name = dataset_config[DATASET_KEY]
     dataset_params = dataset_config[DATASET_PARAMS_KEY]
-    dataset = DATASET_GETTERS[dataset_name](dataset_params)
+    X, y = DATASET_GETTERS[dataset_name](dataset_params)
 
     if (step2recompute > 0) and already_prepared:
         split_samples = retrieve_prepared_data(preparation_step_root)
     else:
         # - split samples in 'predicted as binding' and 'predicted as non-binding'
-        split_samples = split_bind_nonbind(dataset, model, batch_size)
+        split_samples = split_bind_nonbind(X, model, batch_size)
         save_prepared_data(preparation_step_root, split_samples)
 
     # 1. Clustering
@@ -52,7 +52,7 @@ def run_pipeline(config_fpath, step2recompute=100, verbose=False):
     # - preprocessing
     # - - transform data
     pre_cluster_transform_config = clustering_config[PRECLUST_TRANSFORM_KEY]
-    pre_clustering_transform(preclustering_root, pre_cluster_transform_config, split_samples, model, dataset,
+    pre_clustering_transform(preclustering_root, pre_cluster_transform_config, split_samples, model, X,
                              recompute=(step2recompute <= 1))
     # - clustering
     # --
@@ -85,7 +85,7 @@ def run_pipeline(config_fpath, step2recompute=100, verbose=False):
     # - compute anchors
     anchors_config = explainer_config[ANCHORS_KEY]
     anchors = generate_anchors(assignments, cluster_centers, best_clustering, anchors_config, preclustering_root,
-                               explainer_root, model, dataset, split_samples, recompute=(step2recompute <= 6))
+                               explainer_root, model, X, split_samples, recompute=(step2recompute <= 6))
     # - visualize anchors
     # visualize_anchors(anchors, anchors_config, dataset, split_samples, recompute=(step2recompute <= 7))
     # - evaluate anchors

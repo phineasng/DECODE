@@ -1,7 +1,7 @@
 {
   "root": "/dccstor/kme/repos/interpret_tcr/results/test",
   "model": {
-    "model_id": "titan",
+    "model_id": "titan_fixed_epitope",
     "model_params": {
       "params": {
         "augment_smiles": false, "smiles_canonical": false,
@@ -16,7 +16,8 @@
         "receptor_filters": [26, 26, 26], "receptor_kernel_sizes": [[3, 26], [7, 26], [11, 26]],
         "ligand_kernel_sizes": [[3, 26], [5, 26], [7, 26]], "ligand_vocabulary_size": 571,
         "receptor_vocabulary_size": 28, "ligand_as": "smiles", "number_of_parameters": 2216491},
-      "ckpt": "/dccstor/kme/repos/interpret_tcr/data/titan_model/smi_full_fold1_published_code/weights/best_ROC-AUC_bimodal_mca.pt"
+      "ckpt": "/dccstor/kme/repos/interpret_tcr/data/titan_model/smi_full_fold1_published_code/weights/best_ROC-AUC_bimodal_mca.pt",
+      "fixed_epitope_path": "/dccstor/kme/repos/interpret_tcr/data/titan_model/fixed_epitope.pkl"
     }
   },
   "dataset": {

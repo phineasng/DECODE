@@ -124,7 +124,13 @@ def get_aa_tcr_dataset(data_params, device=torch.device('cpu')):
         device=device
     )
 
-    return dataset
+    dataset_numpy = []
+    y_numpy = []
+    for i in range(len(dataset)):
+        dataset_numpy.append(dataset[i][1].detach().cpu().numpy())
+        y_numpy.append(dataset[i][2].detach().cpu().numpy())
+
+    return np.stack(dataset_numpy, axis=0), np.array(y_numpy)
 
 
 def blosum2index_drugaffinity_ds(samples, model, dataset):

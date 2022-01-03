@@ -1,9 +1,9 @@
-from intcr.models.titan import load_titan
+from intcr.models.titan import load_titan_fixed_epitope
 
 
 MODEL_CONFIG_KEY = 'model'
 MODEL_NAME_KEY = 'model_id'
 MODEL_PARAMS_KEY = 'model_params'
 MODEL_LOADERS = {
-    'titan': load_titan
+    'titan_fixed_epitope': load_titan_fixed_epitope
 }

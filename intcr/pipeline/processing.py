@@ -23,7 +23,7 @@ def split_bind_nonbind(dataset: np.array, model, batch_size: int=None):
 
     predictions = []
     for i in progress:
-        x, y = dataset[i:i+batch_size]
+        x = dataset[i:i+batch_size]
         predictions.append(model.predict(x))
 
     predictions = np.concatenate(predictions, axis=0)
