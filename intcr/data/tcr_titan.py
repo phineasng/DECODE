@@ -1,8 +1,11 @@
 import torch
 import numpy as np
+from Levenshtein import distance as lev_dist
+from scipy.spatial.distance import pdist
 from pytoda.proteins import ProteinFeatureLanguage
 from pytoda.smiles import SMILESLanguage
 from pytoda.datasets import DrugAffinityDataset
+from pytoda.proteins.processing import BLOSUM62
 
 
 AA_LANG_KEY = 'protein_language_fpath'
@@ -11,6 +14,15 @@ PEP_FPATH = 'pep_fpath'
 PROTEIN_FPATH = 'protein_fpath'
 SMI_LANG_KEY = 'smile_language_fpath'
 SETUP_PARAMS_KEY = 'setup_params'
+
+BLOSUM_KEY_MAP = {k: k for k in BLOSUM62.keys()}
+BLOSUM_KEY_MAP['<PAD>'] = '_'
+BLOSUM_KEY_MAP['<UNK>'] = '_' # In pytoda, UNK has the same encoding as pad
+BLOSUM_KEY_MAP['<START>'] = '<'
+BLOSUM_KEY_MAP['<STOP>'] = '>'
+REVERSE_BLOSUM62 = {
+    np.array(v).tobytes(): BLOSUM_KEY_MAP[k] for k, v in BLOSUM62.items()
+}
 
 
 def _map_dict_keys(setup_params):
@@ -107,16 +119,28 @@ def get_aa_tcr_dataset(data_params, device=torch.device('cpu')):
     return np.stack(dataset_numpy, axis=0), np.array(y_numpy)
 
 
-def blosum2index_drugaffinity_ds(samples, model, dataset):
+def blosum_embedding2str(x):
     """
-    Turn blosum encoded samples to indeces of an alphabet provided through a DrugAffinity dataset
+    Translates a 2D sample (encoded with BLOSUM62 predefined embeddings) to string
+    """
+    seq = ''.join([REVERSE_BLOSUM62[t.astype(np.int).tobytes()] for t in x])
+    return seq
+
+
+def _flattenblosumembedding2levenshtein(x, y):
+    """
+    Translates a 2D sample (encoded with BLOSUM62 predefined embeddings) to string
+    """
+    return lev_dist(blosum_embedding2str(x.reshape(-1, 26)), blosum_embedding2str(y.reshape(-1, 26)))
+
+
+def blosum2levenshtein(samples):
+    """
+    Turn blosum encoded samples to levenshtein matrix
 
     Args:
         samples (np.array): samples to convert
-        model: unused. Kept to follow a common interface of transforms
-        dataset (DrugAffinityDataset): dataset with info to convert from blosum to protein indeces
     """
-    language = dataset.protein_sequence_dataset.protein_language
-    for s in samples:
-        pass
+    flatten_samples = samples.reshape(len(samples), -1)
+    return pdist(flatten_samples, metric=_flattenblosumembedding2levenshtein)
 
