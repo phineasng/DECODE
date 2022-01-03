@@ -35,5 +35,13 @@
         "ligand_vocabulary_size": 571, "receptor_vocabulary_size": 28, "ligand_as": "smiles"
       }
     }
+  },
+  "clustering": {
+    "cluster_preproc_transform": [
+      {
+        "transform_fn": "blosum_emb2levenshtein",
+        "output_type": "levenshtein_matrix"
+      }
+    ]
   }
 }

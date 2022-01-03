@@ -3,6 +3,7 @@ from sklearn.cluster import (KMeans, DBSCAN, MiniBatchKMeans,
                              Birch, OPTICS, SpectralBiclustering, SpectralCoclustering)
 from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score, silhouette_score
 from sklearn.manifold import TSNE, SpectralEmbedding, LocallyLinearEmbedding
+from intcr.data.tcr_titan import blosum2levenshtein
 
 
 CLUSTERING_KEY = 'clustering'
@@ -14,7 +15,7 @@ VISUALIZATION_KEY = 'cluster_visualization'
 
 
 PRE_CLUSTER_TRANSFORM_REGISTRY = {
-
+    'blosum_emb2levenshtein': blosum2levenshtein
 }
 
 CLUSTERING_ALGOS_REGISTRY = {
