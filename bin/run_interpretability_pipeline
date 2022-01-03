@@ -38,13 +38,14 @@ def run_pipeline(config_fpath, step2recompute=100, verbose=False):
     dataset_name = dataset_config[DATASET_KEY]
     dataset_params = dataset_config[DATASET_PARAMS_KEY]
     X, y = DATASET_GETTERS[dataset_name](dataset_params)
-
+    
     if (step2recompute > 0) and already_prepared:
         split_samples = retrieve_prepared_data(preparation_step_root)
     else:
         # - split samples in 'predicted as binding' and 'predicted as non-binding'
         split_samples = split_bind_nonbind(X, model, batch_size)
         save_prepared_data(preparation_step_root, split_samples)
+    
 
     # 1. Clustering
     clustering_config = config[CLUSTERING_KEY]

@@ -13,9 +13,8 @@ class TITANFixedEpitopeWrapper:
     def predict(self, x: np.array):
         receptors = torch.FloatTensor(x).to(self._device)
         ligand = self._epitope.repeat(len(x), 1)
-        pred = self._titan_model(ligand, receptors)
-        print(pred.shape)
-        return pred
+        pred = self._titan_model(ligand, receptors)[0]
+        return (pred[:, 0] > 0.5).int().detach().cpu().numpy()
 
 
 def load_titan_fixed_epitope(model_config, device=torch.device('cpu')):
