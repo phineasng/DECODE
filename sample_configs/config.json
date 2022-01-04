@@ -53,6 +53,15 @@
           "linkage": "average"
         }
       }
+    ],
+    "cluster_visualization": [
+      {
+        "method": "tsne",
+        "input_type": "levenshtein_matrix",
+        "params": {
+          "distance": "precomputed"
+        }
+      }
     ]
   }
 }

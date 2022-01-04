@@ -196,27 +196,26 @@ def visualize_clusters(assignments, clustering_root, preclustering_root, config,
     if isinstance(config, dict):
         config = [config]
 
-    for cfg in config:
-
+    def parallelizable_fn(cfg, split):
         method = cfg[VISUALIZATION_METHOD_KEY]
         params = cfg.get(VISUALIZATION_PARAMS_KEY, {})
         params['n_components'] = 2
-        inputs, input_type = retrieve_input(cfg, preclustering_root, VISUALIZATION_INPUT_KEY, split_samples)
+        inputs, input_type = retrieve_input(cfg, preclustering_root, VISUALIZATION_INPUT_KEY, split_samples, split)
 
         projection_fn = DATA_VISUALIZATION_REGISTRY[method](**params)
+        projections = projection_fn.fit_transform(inputs)
 
-        for split, samples in inputs.items():
-            projections = projection_fn.fit_transform(samples)
+        for cluster_method, split_labels in assignments[split].items():
 
-            for cluster_method, split_labels in assignments.items():
+            img_title = os.path.join(clustering_root, '{}_{}_{}'.format(method, split, cluster_method))
+            img_path = img_title + '.png'
 
-                img_title = os.path.join(clustering_root, '{}_{}_{}'.format(method, split, cluster_method))
-                img_path = img_title + '.png'
+            if recompute or not os.path.exists(img_path):
+                plt.figure()
+                sns.scatterplot(x=projections[:, 0], y=projections[:, 1], hue=split_labels[split])
+                plt.title(img_title)
+                plt.legend()
+                plt.savefig(img_path, dpi=300, bbox_inches='tight')
 
-                if recompute or not os.path.exists(img_path):
-                    plt.figure()
-                    sns.scatterplot(x=projections[:, 0], y=projections[:, 1], hue=split_labels[split])
-                    plt.title(img_title)
-                    plt.legend()
-                    plt.savefig(img_path, dpi=300, bbox_inches='tight')
-
+    for c, s in generate_preprocessing_instance(config, split_samples.keys()):
+        parallelizable_fn(c, s)
