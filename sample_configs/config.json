@@ -42,6 +42,16 @@
         "transform_fn": "blosum_emb2levenshtein",
         "output_type": "levenshtein_matrix"
       }
+    ],
+    "algos": [
+      {
+        "method": "AgglomerativeClustering",
+        "input_type": "levenshtein_matrix",
+        "params": {
+          "n_clusters": 10,
+          "affinity": "precomputed"
+        }
+      }
     ]
   }
 }

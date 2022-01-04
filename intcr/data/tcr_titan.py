@@ -126,7 +126,6 @@ def blosum_embedding2str(x):
     Translates a 2D sample (encoded with BLOSUM62 predefined embeddings) to string
     """
     seq = ''.join([REVERSE_BLOSUM62[t.astype(np.int).tobytes()] for t in x])
-    print(seq)
     return seq
 
 

@@ -20,16 +20,22 @@ def _retrieve_input(input_folder, input_type):
         raise RuntimeError('{} not found. Are you sure you correctly ran the pre-clustering?')
 
 
-def retrieve_input(config, folder, dict_key, split_samples):
+def retrieve_input(config, folder, dict_key, split_samples, split):
     if dict_key not in config:
         warnings.warn('Input type not detected. The original inputs will be passed to the algo.')
-        inputs = split_samples
-        input_type = 'original'
+        inputs = split_samples[split]
+        input_type = make_split_name('original', split)
     else:
         input_type = config[dict_key]
-        inputs = _retrieve_input(folder, input_type)
+        inputs = _retrieve_input(folder, make_split_name(input_type, split))
     return inputs, input_type
 
 
 def make_split_name(base_name, split):
     return base_name + '_{}'.format(split)
+
+
+def generate_preprocessing_instance(configs, splits):
+    for cfg in configs:
+        for split in splits.keys():
+            yield cfg, split

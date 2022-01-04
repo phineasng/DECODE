@@ -5,7 +5,7 @@ import os
 from intcr.pipeline.config import simple_key_check
 from intcr.pipeline.utils import save_data
 from intcr.clustering import PRE_CLUSTER_TRANSFORM_REGISTRY
-from intcr.pipeline.utils import make_split_name
+from intcr.pipeline.utils import make_split_name, generate_preprocessing_instance
 
 
 PRE_CLUSTER_TRANSFORM_FN_KEY = 'transform_fn'
@@ -23,11 +23,6 @@ def pre_clustering_transform(precluster_root, config, split_samples, model, data
     """
     if isinstance(config, dict):
         config = [config]
-
-    def generate_preprocessing_instance(configs, splits):
-        for cfg in configs:
-            for split in splits.keys():
-                yield cfg, split
 
     def parallelizable_fn(root, cfg, split, samples, recomp_flag):
         check_pre_cluster_transform_config(cfg)

@@ -2,7 +2,7 @@ import os
 from intcr.pipeline.config import simple_key_check
 from intcr.clustering import CLUSTERING_ALGOS_REGISTRY, CLUSTERING_EVALUATION_REGISTRY, \
     CLUSTERING_EVALUATION_MULTIPLIER, DATA_VISUALIZATION_REGISTRY
-from intcr.pipeline.utils import load_data, save_data, retrieve_input
+from intcr.pipeline.utils import load_data, save_data, retrieve_input, generate_preprocessing_instance
 import numpy as np
 from collections import defaultdict
 from ClusterEnsembles import cluster_ensembles
@@ -49,45 +49,55 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
     if isinstance(config, dict):
         config = [config]
 
-    clustering_assignments = dict()
-    clustering_centers = dict()
+    clustering_assignments = defaultdict(dict)
+    clustering_centers = defaultdict(dict)
 
-    for cfg in config:
-        check_cluster_config(cfg)
+    def parallelizable_clustering(conf, split):
+        check_cluster_config(conf)
 
-        method_name = cfg[CLUSTERING_METHOD_KEY]
-        params = cfg[CLUSTERING_PARAMS_KEY]
+        method_name = conf[CLUSTERING_METHOD_KEY]
+        params = conf[CLUSTERING_PARAMS_KEY]
 
-        inputs, input_type = retrieve_input(cfg, preclustering_root, CLUSTERING_INPUT_TYPE_KEY, split_samples)
+        inputs, input_type = retrieve_input(conf, preclustering_root, CLUSTERING_INPUT_TYPE_KEY, split_samples, split)
         clustering_id = '{}_{}'.format(method_name, input_type)
-        clusters_assign_path = os.path.join(clustering_root, '{}_assignments'.format(clustering_id))
-        clusters_center_path = os.path.join(clustering_root, '{}_centers'.format(clustering_id))
+        clustering_id_with_split = '{}_{}'.format(clustering_id, split)
+        clusters_assign_path = os.path.join(clustering_root, '{}_assignments'.format(clustering_id_with_split))
+        clusters_center_path = os.path.join(clustering_root, '{}_centers'.format(clustering_id_with_split))
+        model_path = os.path.join(clustering_root, 'clustermodel_{}'.format(clustering_id_with_split))
 
-        if not recompute:
-            split_clusters = retrieve_results(clusters_assign_path)
-            split_centers = retrieve_results(clusters_center_path)
+        if recompute or \
+                not (os.path.exists(clusters_assign_path) and os.path.exists(clusters_center_path) and
+                    os.path.exists(model_path)):
+            cluster_model = CLUSTERING_ALGOS_REGISTRY[method_name](**params)
+            split_clusters = cluster_model.fit_predict(inputs)
+            split_centers = cluster_model
+            save_data(model_path, cluster_model)
         else:
-            split_clusters = dict()
-            split_centers = dict()
+            cluster_model = load_data(model_path)
+            split_clusters = load_data(clusters_assign_path)
+            split_centers = load_data(clusters_center_path)
+        return {
+            clustering_id: {
+                split: {
+                    split_centers
+                }
+            }
+        }, {
+            clustering_id: {
+                split: {
+                    split_clusters
+                }
+            }
+        }
 
-        if len(split_clusters) != len(inputs):
-            for split, samples in inputs.items():
-                model_path = os.path.join(clustering_root, '{}_{}'.format(clustering_id, split))
-                if recompute or not os.path.exists(model_path):
-                    cluster_model = CLUSTERING_ALGOS_REGISTRY[method_name](**params)
-                    split_clusters[split] = cluster_model.fit_predict(samples)
-                    split_centers[split] = cluster_model.get_centers()
-                    cluster_model.save(model_path)
-                else:
-                    cluster_model = CLUSTERING_ALGOS_REGISTRY[method_name].load(model_path)
-                    split_clusters[split] = cluster_model.predict(samples)
-                    split_centers[split] = cluster_model.get_centers()
+    results = []
+    for c, s in generate_preprocessing_instance(config, split_samples.keys()):
+        results.append(parallelizable_clustering(c, s))
 
-        clustering_assignments[clustering_id] = split_clusters
-        clustering_centers[clustering_id] = split_centers
-
-        save_data(clusters_assign_path, clustering_assignments)
-        save_data(clusters_center_path, clustering_centers)
+    for r in results:
+        for k in r[0].keys():
+            clustering_centers[k].update(r[0][k])
+            clustering_assignments[k].update(r[1][k])
 
     return clustering_centers, clustering_assignments
 

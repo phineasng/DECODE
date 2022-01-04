@@ -31,6 +31,21 @@ CLUSTERING_ALGOS_REGISTRY = {
     'SpectralCoclustering': SpectralCoclustering
 }
 
+
+CLUSTERING_ALGOS_CENTERS_GET_FN = {
+    'KMeans': KMeans,
+    'DBSCAN': DBSCAN,
+    'MiniBatchKMeans': MiniBatchKMeans,
+    'SpectralClustering': SpectralClustering,
+    'MeanShift': MeanShift,
+    'AgglomerativeClustering': AgglomerativeClustering,
+    'Birch': Birch,
+    'OPTICS': OPTICS,
+    'SpectralBiclustering': SpectralBiclustering,
+    'SpectralCoclustering': SpectralCoclustering
+}
+
+
 CLUSTERING_EVALUATION_REGISTRY = {
     'davies_bouldin': davies_bouldin_score,
     'calinski_harabasz': calinski_harabasz_score,
