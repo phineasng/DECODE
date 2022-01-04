@@ -41,6 +41,10 @@
       {
         "transform_fn": "blosum_emb2levenshtein",
         "output_type": "levenshtein_matrix"
+      },
+      {
+        "transform_fn": "blosum_emb2categorical",
+        "output_type": "categorical"
       }
     ],
     "algos": [

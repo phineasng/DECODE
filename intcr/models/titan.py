@@ -2,6 +2,7 @@ import torch
 import numpy as np
 from intcr.pipeline.utils import load_data
 from paccmann_predictor.models import MODEL_FACTORY
+from intcr.data.tcr_titan import BLOSUM_IDX2KEY, BLOSUM62
 
 
 class TITANFixedEpitopeWrapper:
@@ -11,8 +12,17 @@ class TITANFixedEpitopeWrapper:
         self._epitope = torch.IntTensor(load_data(epitope_fpath)).to(device)
 
     def predict(self, x: np.array):
-        receptors = torch.FloatTensor(x).to(self._device)
         ligand = self._epitope.repeat(len(x), 1)
+        if len(x.shape) == 3:
+            receptors = torch.FloatTensor(x).to(self._device)
+        else:
+            new_x = []
+            for s in x:
+                sample = []
+                for token in s:
+                    sample.append(np.array(BLOSUM62[BLOSUM_IDX2KEY[token]]))
+                new_x.append(np.stack(sample, axis=0))
+            receptors = torch.FloatTensor(np.stack(new_x, axis=0)).to(self._device)
         pred = self._titan_model(ligand, receptors)[0]
         return (pred[:, 0] > 0.5).int().detach().cpu().numpy()
 

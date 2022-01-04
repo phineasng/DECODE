@@ -151,3 +151,12 @@ def blosum2levenshtein(samples):
     flatten_samples = samples.reshape(len(samples), -1)
     return squareform(pdist(flatten_samples, metric=_flattenblosumembedding2levenshtein))
 
+
+def blosum_embedding2idx(samples):
+    """
+    Turn blosum encoded samples to categorical idx
+    """
+    new_x = []
+    for sample in samples:
+        new_x.append([REVERSE_BLOSUM62_INT[t] for t in sample])
+    return np.stack(new_x, axis=0)
