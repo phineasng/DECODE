@@ -87,9 +87,9 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
         results.append(parallelizable_clustering(c, s))
 
     for r in results:
-        for k in r[0].keys():
-            clustering_centers[k].update(r[0][k])
-            clustering_assignments[k].update(r[1][k])
+        for k in r['labels'].keys():
+            clustering_centers[k].update(r['centers'][k])
+            clustering_assignments[k].update(r['labels'][k])
 
     return clustering_centers, clustering_assignments
 
