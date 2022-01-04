@@ -76,19 +76,11 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
             cluster_model = load_data(model_path)
             split_clusters = load_data(clusters_assign_path)
             split_centers = load_data(clusters_center_path)
-        return {
-            clustering_id: {
-                split: {
-                    split_centers
-                }
-            }
-        }, {
-            clustering_id: {
-                split: {
-                    split_clusters
-                }
-            }
+        result = {
+            'centers': {clustering_id: {split: split_centers}},
+            'labels': {clustering_id: {split: split_clusters}}
         }
+        return result
 
     results = []
     for c, s in generate_preprocessing_instance(config, split_samples.keys()):
