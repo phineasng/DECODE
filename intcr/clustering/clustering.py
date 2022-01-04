@@ -148,7 +148,12 @@ def consensus_clustering(results_root, assignments, config, recompute=False):
 
 def select_best_clustering(assignments, clustering_root, preclustering_root, config: dict,
                            split_samples, recompute=False):
+
+    method = config[SELECTION_METHOD_KEY]
+    params = config.get(SELECTION_PARAMS_KEY, {})
+    scores_fpath = os.path.join(clustering_root, '{}'.format(method))
     scores = dict()
+
     if len(assignments) == 1:
         # ugly - is there a way to get the key if dict has only one element?
         for cluster_method in assignments.keys():
@@ -157,13 +162,8 @@ def select_best_clustering(assignments, clustering_root, preclustering_root, con
                     CLUSTERING_METHOD_KEY: cluster_method,
                     'score': 0.
                 }
-
+        save_data(scores_fpath, scores)
         return scores
-
-    method = config[SELECTION_METHOD_KEY]
-    params = config.get(SELECTION_PARAMS_KEY, {})
-
-    scores_fpath = os.path.join(clustering_root, '{}'.format(method))
 
     if os.path.exists(scores_fpath) and not recompute:
         scores = load_data(scores_fpath)
