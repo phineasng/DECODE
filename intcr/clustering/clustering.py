@@ -205,14 +205,14 @@ def visualize_clusters(assignments, clustering_root, preclustering_root, config,
         projection_fn = DATA_VISUALIZATION_REGISTRY[method](**params)
         projections = projection_fn.fit_transform(inputs)
 
-        for cluster_method, split_labels in assignments[split].items():
+        for cluster_method in assignments.keys():
 
             img_title = os.path.join(clustering_root, '{}_{}_{}'.format(method, split, cluster_method))
             img_path = img_title + '.png'
 
             if recompute or not os.path.exists(img_path):
                 plt.figure()
-                sns.scatterplot(x=projections[:, 0], y=projections[:, 1], hue=split_labels[split])
+                sns.scatterplot(x=projections[:, 0], y=projections[:, 1], hue=assignments[cluster_method][split])
                 plt.title(img_title)
                 plt.legend()
                 plt.savefig(img_path, dpi=300, bbox_inches='tight')

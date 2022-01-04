@@ -59,7 +59,7 @@
         "method": "tsne",
         "input_type": "levenshtein_matrix",
         "params": {
-          "distance": "precomputed"
+          "metric": "precomputed"
         }
       }
     ]
