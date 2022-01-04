@@ -49,7 +49,8 @@
         "input_type": "levenshtein_matrix",
         "params": {
           "n_clusters": 10,
-          "affinity": "precomputed"
+          "affinity": "precomputed",
+          "linkage": "average"
         }
       }
     ]
