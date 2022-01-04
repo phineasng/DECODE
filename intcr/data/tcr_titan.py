@@ -120,7 +120,7 @@ def get_aa_tcr_dataset(data_params, device=torch.device('cpu')):
     for i in range(len(dataset)):
         dataset_numpy.append(dataset[i][1].detach().cpu().numpy())
         y_numpy.append(dataset[i][2].detach().cpu().numpy())
-        if i == 100: #remove after debugging
+        if i == 500: #remove after debugging
             break
 
     return np.stack(dataset_numpy, axis=0), np.array(y_numpy)
