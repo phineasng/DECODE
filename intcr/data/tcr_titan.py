@@ -16,12 +16,17 @@ SMI_LANG_KEY = 'smile_language_fpath'
 SETUP_PARAMS_KEY = 'setup_params'
 
 BLOSUM_KEY_MAP = {k: k for k in BLOSUM62.keys()}
+BLOSUM_IDX2KEY = [k for k in sorted(BLOSUM62.keys())]
+BLOSUM_KEY2IDX = {k: i for i,k in enumerate(BLOSUM_IDX2KEY)}
 BLOSUM_KEY_MAP['<PAD>'] = '_'
 BLOSUM_KEY_MAP['<UNK>'] = '_' # In pytoda, UNK has the same encoding as pad
 BLOSUM_KEY_MAP['<START>'] = '<'
 BLOSUM_KEY_MAP['<STOP>'] = '>'
 REVERSE_BLOSUM62 = {
     np.array(v).tobytes(): BLOSUM_KEY_MAP[k] for k, v in BLOSUM62.items()
+}
+REVERSE_BLOSUM62_INT = {
+    np.array(v).tobytes(): BLOSUM_KEY2IDX[k] for k, v in BLOSUM62.items()
 }
 
 

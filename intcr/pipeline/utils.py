@@ -35,7 +35,7 @@ def make_split_name(base_name, split):
     return base_name + '_{}'.format(split)
 
 
-def generate_preprocessing_instance(configs, splits):
+def generate_preprocessing_instance(configs, split_keys):
     for cfg in configs:
-        for split in splits.keys():
+        for split in split_keys:
             yield cfg, split
