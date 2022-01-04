@@ -158,5 +158,5 @@ def blosum_embedding2idx(samples):
     """
     new_x = []
     for sample in samples:
-        new_x.append([REVERSE_BLOSUM62_INT[t] for t in sample])
+        new_x.append([REVERSE_BLOSUM62_INT[t.astype(np.int).tobytes()] for t in sample])
     return np.stack(new_x, axis=0)
