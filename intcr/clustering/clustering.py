@@ -73,7 +73,6 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
             split_centers = cluster_model
             save_data(model_path, cluster_model)
         else:
-            cluster_model = load_data(model_path)
             split_clusters = load_data(clusters_assign_path)
             split_centers = load_data(clusters_center_path)
         result = {
@@ -154,7 +153,6 @@ def select_best_clustering(assignments, clustering_root, preclustering_root, con
         for cluster_method in assignments.keys():
             return cluster_method
 
-    inputs, input_type = retrieve_input(config, preclustering_root, SELECTION_INPUT_KEY, split_samples)
     scores = dict()
 
     method = config[SELECTION_METHOD_KEY]
@@ -176,15 +174,29 @@ def select_best_clustering(assignments, clustering_root, preclustering_root, con
         recompute = True
 
     if recompute:
-        for split, samples in inputs.items():
-            methods = []
+        def parallelizable_fn(cluster_method, split):
+            inputs, input_type = retrieve_input(config, preclustering_root, SELECTION_INPUT_KEY, split_samples, split)
+            curr_score = CLUSTERING_EVALUATION_REGISTRY[method](inputs, assignments[cluster_method][split], **params)
+            return {
+                'method': cluster_method,
+                'score': curr_score,
+                'split': split
+            }
+
+        results = []
+        for c, s in generate_preprocessing_instance(assignments.keys(), split_samples.keys()):
+            results.append(parallelizable_fn(c, s))
+
+        for s in split_samples.keys():
+            curr_methods = []
             curr_scores = []
-            for cluster_method, split_labels in assignments.items():
-                methods.append(cluster_method)
-                curr_scores.append(CLUSTERING_EVALUATION_REGISTRY[method](samples, split_labels[split], **params))
-            best_idx = np.argmax(CLUSTERING_EVALUATION_MULTIPLIER[method]*np.array(curr_scores))
-            scores[split] = {
-                CLUSTERING_METHOD_KEY: methods[best_idx],
+            for r in results:
+                if r['split'] == s:
+                    curr_methods.append(r['method'])
+                    curr_scores.append(r['score'])
+            best_idx = np.argmax(CLUSTERING_EVALUATION_MULTIPLIER[method] * np.array(curr_scores))
+            scores[s] = {
+                CLUSTERING_METHOD_KEY: curr_methods[best_idx],
                 'score': curr_scores[best_idx]
             }
         save_data(scores_fpath, scores)

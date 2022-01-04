@@ -62,6 +62,9 @@
           "metric": "precomputed"
         }
       }
-    ]
+    ],
+    "cluster_selection": {
+      "method": "davies_bouldin"
+    }
   }
 }
