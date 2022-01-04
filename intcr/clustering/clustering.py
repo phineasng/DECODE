@@ -158,6 +158,8 @@ def select_best_clustering(assignments, clustering_root, preclustering_root, con
                     'score': 0.
                 }
 
+        return scores
+
     method = config[SELECTION_METHOD_KEY]
     params = config.get(SELECTION_PARAMS_KEY, {})
 
