@@ -56,6 +56,29 @@
           "affinity": "precomputed",
           "linkage": "average"
         }
+      },
+      {
+        "method": "KMedoids",
+        "input_type": "levenshtein_matrix",
+        "params": {
+          "n_clusters": 10,
+          "metric": "precomputed"
+        }
+      },
+      {
+        "method": "DBSCAN",
+        "input_type": "levenshtein_matrix",
+        "params": {
+          "eps": 10,
+          "metric": "precomputed"
+        }
+      },
+      {
+        "method": "OPTICS",
+        "input_type": "levenshtein_matrix",
+        "params": {
+          "metric": "precomputed"
+        }
       }
     ],
     "cluster_visualization": [
