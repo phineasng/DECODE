@@ -27,7 +27,13 @@ class TITANFixedEpitopeWrapper:
             print(receptors)
             print(receptors.shape)
             print(ligand.shape)
-        pred = self._titan_model(ligand, receptors)[0]
+        if len(x) == 1:
+            ligand = ligand.repeat(2, 1)
+            receptors = receptors.repeat(2, 1, 1)
+            pred = self._titan_model(ligand, receptors)[0]
+            pred = pred[0:1, :]
+        else:
+            pred = self._titan_model(ligand, receptors)[0]
         return (pred[:, 0] > 0.5).int().detach().cpu().numpy()
 
 
