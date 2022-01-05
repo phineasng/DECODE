@@ -20,7 +20,7 @@ class TITANFixedEpitopeWrapper:
             for s in x:
                 sample = []
                 for token in s:
-                    sample.append(np.array(BLOSUM62[BLOSUM_IDX2KEY[token]]))
+                    sample.append(np.array(BLOSUM62[BLOSUM_IDX2KEY[np.int(token)]]))
                 new_x.append(np.stack(sample, axis=0))
             receptors = torch.FloatTensor(np.stack(new_x, axis=0)).to(self._device)
         pred = self._titan_model(ligand, receptors)[0]
