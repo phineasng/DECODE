@@ -1,4 +1,4 @@
-import argparse, torch, json
+import argparse, torch, json, os
 from intcr.models import MODEL_LOADERS, MODEL_CONFIG_KEY, MODEL_NAME_KEY, MODEL_PARAMS_KEY
 from intcr.data import DATASET_CONFIG_KEY, DATASET_GETTERS, DATASET_KEY, DATASET_PARAMS_KEY
 from intcr.pipeline.processing import split_bind_nonbind
@@ -13,9 +13,10 @@ from intcr.clustering.clustering import clustering, consensus_clustering, select
 from intcr.explain.anchors import generate_anchors
 from intcr.explain import EXPLAINER_KEY, ANCHORS_KEY
 from copy import deepcopy
+from intcr.pipeline.logging import _CURRENT_LOGGER, Logger
 
 
-def run_pipeline(config_fpath, step2recompute=100, verbose=False):
+def run_pipeline(config_fpath, step2recompute=100, verbose_level=40):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     with open(config_fpath, 'r') as in_config:
         config = json.load(in_config)
@@ -24,27 +25,42 @@ def run_pipeline(config_fpath, step2recompute=100, verbose=False):
     root = config[EXPERIMENT_ROOT_KEY]
     setup_folder(root)
 
+    log_root = os.path.join(root,'logs')
+    setup_folder(log_root)
+    _CURRENT_LOGGER = Logger('run_pipeline', log_root)
+    _CURRENT_LOGGER.set_stderr_level(verbose_level)
+
     # 0. preparation
+    _CURRENT_LOGGER.info('Setting up the pipeline.')
     preparation_step_root, already_prepared = setup_preparation_root(root)
     batch_size = config.get('batch_size', None)
     # - load model
+    _CURRENT_LOGGER.info('Loading the model.')
     model_config = config[MODEL_CONFIG_KEY]
     model_name = model_config[MODEL_NAME_KEY]
     model_params = model_config[MODEL_PARAMS_KEY]
     model = MODEL_LOADERS[model_name](model_params, device=device)
 
     # - load data
+    _CURRENT_LOGGER.info('Loading the dataset.')
     dataset_config = config[DATASET_CONFIG_KEY]
     dataset_name = dataset_config[DATASET_KEY]
     dataset_params = dataset_config[DATASET_PARAMS_KEY]
     X, y = DATASET_GETTERS[dataset_name](dataset_params)
-    
+    _CURRENT_LOGGER.debug('{}'.format(X))
+    _CURRENT_LOGGER.debug('{}'.format(y))
+
+    _CURRENT_LOGGER.info('Splitting dataset.')
     if (step2recompute > 0) and already_prepared:
+        _CURRENT_LOGGER.debug('Using precomputed data.')
         split_samples = retrieve_prepared_data(preparation_step_root)
     else:
         # - split samples in 'predicted as binding' and 'predicted as non-binding'
+        _CURRENT_LOGGER.debug('Splitting...')
         split_samples = split_bind_nonbind(X, model, batch_size)
         save_prepared_data(preparation_step_root, split_samples)
+        _CURRENT_LOGGER.debug('Done splitting.')
+    _CURRENT_LOGGER.debug('{}'.format(split_samples))
     
 
     # 1. Clustering
@@ -112,6 +128,13 @@ if __name__ == '__main__':
                              'Default: 100 (no re-computation).'
                              'All the steps after the one defined will also be recomputed!',
                         required=False, default=100)
+    parser.add_argument('--verbose', required=False, default=40,
+                        help='Verbosity level.\n'
+                             '(10) Debug.\n'
+                             '(20) Info.\n'
+                             '(30) Warning.\n'
+                             '(40) Error (Default).\n'
+                             '(50) Critical.\n')
 
     args = parser.parse_args()
-    run_pipeline(args.config, args.step2recompute)
+    run_pipeline(args.config, args.step2recompute, args.verbose_level)
