@@ -1,7 +1,7 @@
 import os
 from intcr.pipeline.config import simple_key_check
 from intcr.clustering import CLUSTERING_ALGOS_REGISTRY, CLUSTERING_EVALUATION_REGISTRY, \
-    CLUSTERING_EVALUATION_MULTIPLIER, DATA_VISUALIZATION_REGISTRY
+    CLUSTERING_EVALUATION_MULTIPLIER, DATA_VISUALIZATION_REGISTRY, CLUSTERING_ALGOS_CENTERS_GET_FN
 from intcr.pipeline.utils import load_data, save_data, retrieve_input, generate_preprocessing_instance
 import numpy as np
 from collections import defaultdict
@@ -70,15 +70,16 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
                     os.path.exists(model_path)):
             cluster_model = CLUSTERING_ALGOS_REGISTRY[method_name](**params)
             split_clusters = cluster_model.fit_predict(inputs)
-            split_centers = cluster_model
+            split_centers = CLUSTERING_ALGOS_CENTERS_GET_FN[method_name](cluster_model)
             save_data(model_path, cluster_model)
         else:
             split_clusters = load_data(clusters_assign_path)
             split_centers = load_data(clusters_center_path)
         result = {
-            'centers': {clustering_id: {split: split_centers}},
             'labels': {clustering_id: {split: split_clusters}}
         }
+        if split_centers is not None:
+            result.update({'centers': {clustering_id: {split: split_centers}}})
         return result
 
     results = []
@@ -87,7 +88,8 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
 
     for r in results:
         for k in r['labels'].keys():
-            clustering_centers[k].update(r['centers'][k])
+            if 'centers' in r:
+                clustering_centers[k].update(r['centers'][k])
             clustering_assignments[k].update(r['labels'][k])
 
     return clustering_centers, clustering_assignments

@@ -4,6 +4,7 @@ from sklearn.cluster import (KMeans, DBSCAN, MiniBatchKMeans,
 from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score, silhouette_score
 from sklearn.manifold import TSNE, SpectralEmbedding, LocallyLinearEmbedding
 from intcr.data.tcr_titan import blosum2levenshtein, blosum_embedding2idx
+from sklearn_extra.cluster import KMedoids
 
 
 CLUSTERING_KEY = 'clustering'
@@ -21,6 +22,7 @@ PRE_CLUSTER_TRANSFORM_REGISTRY = {
 
 CLUSTERING_ALGOS_REGISTRY = {
     'KMeans': KMeans,
+    'KMedoids': KMedoids,
     'DBSCAN': DBSCAN,
     'MiniBatchKMeans': MiniBatchKMeans,
     'SpectralClustering': SpectralClustering,
@@ -34,16 +36,17 @@ CLUSTERING_ALGOS_REGISTRY = {
 
 
 CLUSTERING_ALGOS_CENTERS_GET_FN = {
-    'KMeans': KMeans,
-    'DBSCAN': DBSCAN,
-    'MiniBatchKMeans': MiniBatchKMeans,
-    'SpectralClustering': SpectralClustering,
-    'MeanShift': MeanShift,
-    'AgglomerativeClustering': AgglomerativeClustering,
-    'Birch': Birch,
-    'OPTICS': OPTICS,
-    'SpectralBiclustering': SpectralBiclustering,
-    'SpectralCoclustering': SpectralCoclustering
+    'KMeans': lambda model: None,
+    'KMedoids': lambda model: model.medoid_indices_,
+    'DBSCAN': lambda model: model.core_sample_indices_,
+    'MiniBatchKMeans': lambda model: None,
+    'SpectralClustering': lambda model: None,
+    'MeanShift': lambda model: None,
+    'AgglomerativeClustering': lambda model: None,
+    'Birch': lambda model: None,
+    'OPTICS': lambda model: None,
+    'SpectralBiclustering': lambda model: None,
+    'SpectralCoclustering': lambda model: None
 }
 
 
