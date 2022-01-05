@@ -13,7 +13,10 @@ from intcr.clustering.clustering import clustering, consensus_clustering, select
 from intcr.explain.anchors import generate_anchors
 from intcr.explain import EXPLAINER_KEY, ANCHORS_KEY
 from copy import deepcopy
-from intcr.pipeline.logging import _CURRENT_LOGGER, Logger
+from intcr.pipeline.logging import Logger
+
+
+global _CURRENT_LOGGER
 
 
 def run_pipeline(config_fpath, step2recompute=100, verbose_level=40):
