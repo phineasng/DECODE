@@ -69,14 +69,14 @@
     ],
     "cluster_selection": {
       "method": "davies_bouldin"
-    },
-    "explainer": {
-      "anchors": {
-        "constructor_params": {
-          "seed": 123
-        },
-        "input_type": "categorical"
-      }
+    }
+  },
+  "explainer": {
+    "anchors": {
+      "constructor_params": {
+        "seed": 123
+      },
+      "input_type": "categorical"
     }
   }
 }
