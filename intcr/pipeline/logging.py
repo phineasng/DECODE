@@ -3,6 +3,7 @@ import os
 from datetime import datetime
 
 
+global _CURRENT_LOGGER
 _CURRENT_LOGGER = None
 
 
