@@ -20,7 +20,7 @@ class Logger:
         self._logger_stderr.addHandler(logging.StreamHandler())
 
     def set_stderr_level(self, level):
-        self._logger2stderr.setLevel(level)
+        self._logger_stderr.setLevel(level)
 
     def debug(self, msg):
         self._logger_stderr.debug(msg)
