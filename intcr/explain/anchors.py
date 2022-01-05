@@ -40,7 +40,7 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
         np.random.seed(random_seed)
         # prepare centers
         centers = dict()
-        for split in assignments.keys():
+        for split in split_samples.keys():
             if best_clustering[split]['method'] not in cluster_centers:
                 curr_centers = []
                 labels = assignments[best_clustering[split]['method']][split]
