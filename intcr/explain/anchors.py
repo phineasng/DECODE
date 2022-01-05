@@ -20,7 +20,7 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
     for s in split_samples.keys():
         inputs, _ = retrieve_input(config, preprocessing_folder, ANCHORS_INPUT_KEY, split_samples, s)
         dataset.append(inputs)
-        dataset = np.concatenate(dataset, axis=0)
+    dataset = np.concatenate(dataset, axis=0)
     n_features = len(dataset[0])
     feature_names = ['{}'.format(i) for i in range(n_features)]
     categorical_names = {
