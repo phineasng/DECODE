@@ -13,6 +13,7 @@ class TITANFixedEpitopeWrapper:
         self._epitope = torch.IntTensor(load_data(epitope_fpath)).to(device)
 
     def predict(self, x: np.array):
+        self._titan_model.eval()
         ligand = self._epitope.repeat(len(x), 1)
         if len(x.shape) == 3:
             receptors = torch.FloatTensor(x).to(self._device)
@@ -24,9 +25,6 @@ class TITANFixedEpitopeWrapper:
                     sample.append(BLOSUM62[BLOSUM_IDX2KEY[np.int(token)]])
                 new_x.append(np.stack(np.array(sample), axis=0))
             receptors = torch.FloatTensor(np.stack(new_x, axis=0)).to(self._device)
-            print(receptors)
-            print(receptors.shape)
-            print(ligand.shape)
         if len(x) == 1:
             ligand = ligand.repeat(2, 1)
             receptors = receptors.repeat(2, 1, 1)
