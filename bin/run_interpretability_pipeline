@@ -137,7 +137,7 @@ if __name__ == '__main__':
                              '(20) Info.\n'
                              '(30) Warning.\n'
                              '(40) Error (Default).\n'
-                             '(50) Critical.\n')
+                             '(50) Critical.\n', type=int)
 
     args = parser.parse_args()
     run_pipeline(args.config, args.step2recompute, args.verbose)
