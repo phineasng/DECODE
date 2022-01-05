@@ -17,8 +17,14 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
     explanation_params = config.get(ANCHORS_EXPLANATION_PARAMS_KEY, {})
     n_features = len(dataset[0])
     feature_names = ['{}'.format(i) for i in range(n_features)]
+    ### - find better solution for this
+    tmp = []
+    for s in split_samples.keys():
+        inputs, _ = retrieve_input(config, preprocessing_folder, ANCHORS_INPUT_KEY, split_samples, s)
+        tmp.append(inputs)
+        tmp = np.concatenate(tmp, axis=0)
     categorical_names = {
-        '{}'.format(i): np.unique(dataset[:, i]) for i in range(n_features)
+        '{}'.format(i): np.unique(tmp[:, i]) for i in range(n_features)
     }
     anchors_explainer = AnchorTabular(
         predictor=model.predict,
