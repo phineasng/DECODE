@@ -31,7 +31,7 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
         feature_names=feature_names,
         categorical_names=categorical_names,
         **constructor_params
-    ).fit(dataset[:])
+    ).fit(dataset)
 
     anchors = defaultdict(dict)
     anchors_fpath = os.path.join(results_root, 'anchors.pkl')
