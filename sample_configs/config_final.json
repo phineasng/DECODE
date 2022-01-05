@@ -1,5 +1,5 @@
 {
-  "root": "/dccstor/kme/repos/interpret_tcr/results/test",
+  "root": "/dccstor/kme/repos/interpret_tcr/results/paper",
   "model": {
     "model_id": "titan_fixed_epitope",
     "model_params": {
@@ -24,7 +24,7 @@
     "dataset_id": "tcr_affinity_smile",
     "dataset_params": {
       "protein_language_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/protein_language.pkl",
-      "affinity_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/Interaction_file_train_reduced_debug.csv",
+      "affinity_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/Interaction_file_train_reduced.csv",
       "pep_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/epitopes.smi",
       "protein_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/Input_TITAN_full_sequence.csv",
       "smile_language_fpath": "/dccstor/kme/repos/interpret_tcr/data/titan_model/dataset_files/smiles_language.pkl",
