@@ -5,6 +5,9 @@ from paccmann_predictor.models import MODEL_FACTORY
 from intcr.data.tcr_titan import BLOSUM_IDX2KEY, BLOSUM62
 
 
+global _CURRENT_LOGGER
+
+
 class TITANFixedEpitopeWrapper:
     def __init__(self, titan_torch, device, epitope_fpath):
         self._device = device
@@ -20,9 +23,10 @@ class TITANFixedEpitopeWrapper:
             for s in x:
                 sample = []
                 for token in s:
-                    sample.append(np.array(BLOSUM62[BLOSUM_IDX2KEY[np.int(token)]]))
-                new_x.append(np.stack(sample, axis=0))
+                    sample.append(BLOSUM62[BLOSUM_IDX2KEY[np.int(token)]])
+                new_x.append(np.stack(np.array(sample), axis=0))
             receptors = torch.FloatTensor(np.stack(new_x, axis=0)).to(self._device)
+            _CURRENT_LOGGER.debug(receptors)
         pred = self._titan_model(ligand, receptors)[0]
         return (pred[:, 0] > 0.5).int().detach().cpu().numpy()
 
