@@ -91,7 +91,13 @@
       }
     ],
     "cluster_selection": {
-      "method": "davies_bouldin"
+      "method": "silhouette",
+      "input_type": "levenshtein_matrix",
+      "params": {
+        "metric": "precomputed",
+        "samples_size": 100,
+        "random_state": 12345
+      }
     }
   },
   "explainer": {

@@ -13,6 +13,7 @@ import seaborn as sns
 CLUSTERING_METHOD_KEY = 'method'
 CLUSTERING_PARAMS_KEY = 'params'
 CLUSTERING_INPUT_TYPE_KEY = 'input_type'
+CLUSTERING_PARAM4ID_KEY = 'param4identification'
 
 CONSENSUS_METHOD_KEY = 'method'
 CONSENSUS_PARAMS_KEY = 'params'
@@ -57,10 +58,15 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
 
         method_name = conf[CLUSTERING_METHOD_KEY]
         params = conf[CLUSTERING_PARAMS_KEY]
+        param4id = conf.get(CLUSTERING_PARAM4ID_KEY, None)
 
         inputs, input_type = retrieve_input(conf, preclustering_root, CLUSTERING_INPUT_TYPE_KEY, split_samples, split)
         clustering_id = '{}_{}'.format(method_name, input_type)
-        clustering_id_with_split = '{}_{}'.format(clustering_id, split)
+        if param4id is not None:
+            p4id = params.get(param4id, None)
+            if p4id is not None:
+                clustering_id = clustering_id + '_{}_{}'.format(param4id, p4id).replace('.', '_')
+        clustering_id_with_split = '{}_split{}'.format(clustering_id, split)
         clusters_assign_path = os.path.join(clustering_root, '{}_assignments'.format(clustering_id_with_split))
         clusters_center_path = os.path.join(clustering_root, '{}_centers'.format(clustering_id_with_split))
         model_path = os.path.join(clustering_root, 'clustermodel_{}'.format(clustering_id_with_split))
@@ -226,8 +232,8 @@ def visualize_clusters(assignments, clustering_root, preclustering_root, config,
 
         for cluster_method in assignments.keys():
 
-            img_title = os.path.join(clustering_root, '{}_{}_{}'.format(method, split, cluster_method))
-            img_path = img_title + '.png'
+            img_title = '{}_split{}_{}'.format(method, split, cluster_method)
+            img_path = os.path.join(clustering_root, img_title + '.png')
 
             if recompute or not os.path.exists(img_path):
                 plt.figure()

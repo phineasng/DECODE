@@ -64,7 +64,6 @@ def run_pipeline(config_fpath, step2recompute=100, verbose_level=40):
         save_prepared_data(preparation_step_root, split_samples)
         _CURRENT_LOGGER.debug('Done splitting.')
     _CURRENT_LOGGER.debug('{}'.format(split_samples))
-    
 
     # 1. Clustering
     clustering_config = config[CLUSTERING_KEY]
