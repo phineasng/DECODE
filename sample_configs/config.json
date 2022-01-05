@@ -51,6 +51,7 @@
       {
         "method": "AgglomerativeClustering",
         "input_type": "levenshtein_matrix",
+        "param4identification": "n_clusters",
         "params": {
           "n_clusters": 10,
           "affinity": "precomputed",
@@ -60,6 +61,7 @@
       {
         "method": "KMedoids",
         "input_type": "levenshtein_matrix",
+        "param4identification": "n_clusters",
         "params": {
           "n_clusters": 10,
           "metric": "precomputed"
@@ -68,8 +70,9 @@
       {
         "method": "DBSCAN",
         "input_type": "levenshtein_matrix",
+        "param4identification": "eps",
         "params": {
-          "eps": 10,
+          "eps": 1,
           "metric": "precomputed"
         }
       },
