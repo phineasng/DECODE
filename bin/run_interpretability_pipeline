@@ -105,7 +105,7 @@ def run_pipeline(config_fpath, step2recompute=100, verbose_level=40):
     # - compute anchors
     anchors_config = explainer_config[ANCHORS_KEY]
     anchors = generate_anchors(assignments, cluster_centers, best_clustering, anchors_config, preclustering_root,
-                               explainer_root, model, X, split_samples, recompute=(step2recompute <= 6))
+                               explainer_root, model, split_samples, recompute=(step2recompute <= 6))
     # - visualize anchors
     # visualize_anchors(anchors, anchors_config, dataset, split_samples, recompute=(step2recompute <= 7))
     # - evaluate anchors
