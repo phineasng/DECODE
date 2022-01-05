@@ -24,7 +24,7 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
     n_features = len(dataset[0])
     feature_names = ['{}'.format(i) for i in range(n_features)]
     categorical_names = {
-        '{}'.format(i): np.unique(dataset[:, i]) for i in range(n_features)
+        i: np.unique(dataset[:, i]) for i in range(n_features)
     }
     anchors_explainer = AnchorTabular(
         predictor=model.predict,
