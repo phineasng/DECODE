@@ -78,6 +78,8 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
             split_clusters = cluster_model.fit_predict(inputs)
             split_centers = CLUSTERING_ALGOS_CENTERS_GET_FN[method_name](cluster_model)
             save_data(model_path, cluster_model)
+            save_data(clusters_assign_path, split_clusters)
+            save_data(clusters_center_path, split_centers)
         else:
             split_clusters = load_data(clusters_assign_path)
             split_centers = load_data(clusters_center_path)
