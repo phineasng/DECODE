@@ -99,7 +99,8 @@
       "constructor_params": {
         "seed": 123
       },
-      "input_type": "categorical"
+      "input_type": "categorical",
+      "categorical_alphabet": "blosum_categorical"
     }
   }
 }
