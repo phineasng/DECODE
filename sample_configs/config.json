@@ -68,15 +68,6 @@
         }
       },
       {
-        "method": "DBSCAN",
-        "input_type": "levenshtein_matrix",
-        "param4identification": "eps",
-        "params": {
-          "eps": 1,
-          "metric": "precomputed"
-        }
-      },
-      {
         "method": "OPTICS",
         "input_type": "levenshtein_matrix",
         "params": {
