@@ -8,5 +8,5 @@ DATASET_GETTERS = {
     'tcr_affinity_smile': get_aa_tcr_dataset,
 }
 CATEGORICAL_ALPHABETS = {
-    'categorical_blosum': BLOSUM_IDX2KEY
+    'blosum_categorical': BLOSUM_IDX2KEY
 }
