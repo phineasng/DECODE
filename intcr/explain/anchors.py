@@ -3,11 +3,13 @@ import numpy as np
 from alibi.explainers import AnchorTabular
 from collections import defaultdict
 from intcr.pipeline.utils import retrieve_input, load_data, save_data
+from intcr.data import CATEGORICAL_ALPHABETS
 
 
 ANCHORS_CONSTRUCTOR_PARAMS_KEY = 'constructor_params'
 ANCHORS_EXPLANATION_PARAMS_KEY = 'explanation_params'
 ANCHORS_INPUT_KEY = 'input_type'
+ANCHORS_CATEGORICAL_ALPHABET_KEY = 'categorical_alphabet'
 
 
 def generate_anchors(assignments, cluster_centers, best_clustering, config, preprocessing_folder, results_root,
@@ -24,7 +26,7 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
     n_features = len(dataset[0])
     feature_names = ['{}'.format(i) for i in range(n_features)]
     categorical_names = {
-        i: np.unique(dataset[:, i]) for i in range(n_features)
+        i: CATEGORICAL_ALPHABETS[config[ANCHORS_CATEGORICAL_ALPHABET_KEY]] for i in range(n_features)
     }
     anchors_explainer = AnchorTabular(
         predictor=model.predict,
