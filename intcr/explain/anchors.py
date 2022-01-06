@@ -60,7 +60,11 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
 
         def parallelizable_fn(spl, cnt):
             inputs, _ = retrieve_input(config, preprocessing_folder, ANCHORS_INPUT_KEY, split_samples, spl)
-            return {spl: {cnt: anchors_explainer.explain(inputs[cnt], **explanation_params)}}
+            partial_anchors_fpath = os.path.join(results_root, 'anchors_split{}_centroid{}.pkl'.format(spl, cnt))
+            anchor = anchors_explainer.explain(inputs[cnt], **explanation_params)
+            result = {spl: {cnt: anchor}}
+            save_data(partial_anchors_fpath, anchor)
+            return result
 
         results = []
         for s, c in generate_split_center_args():
