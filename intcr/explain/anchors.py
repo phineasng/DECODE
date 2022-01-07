@@ -59,11 +59,14 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
                     yield sp, cntr
 
         def parallelizable_fn(spl, cnt):
-            inputs, _ = retrieve_input(config, preprocessing_folder, ANCHORS_INPUT_KEY, split_samples, spl)
             partial_anchors_fpath = os.path.join(results_root, 'anchors_split{}_centroid{}.pkl'.format(spl, cnt))
-            anchor = anchors_explainer.explain(inputs[cnt], **explanation_params)
+            if os.path.exists(partial_anchors_fpath):
+                anchor = load_data(partial_anchors_fpath)
+            else:
+                inputs, _ = retrieve_input(config, preprocessing_folder, ANCHORS_INPUT_KEY, split_samples, spl)
+                anchor = anchors_explainer.explain(inputs[cnt], **explanation_params)
+                save_data(partial_anchors_fpath, anchor)
             result = {spl: {cnt: anchor}}
-            save_data(partial_anchors_fpath, anchor)
             return result
 
         results = []
