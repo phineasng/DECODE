@@ -1,9 +1,13 @@
 import os
 import numpy as np
+import pandas as pd
 from alibi.explainers import AnchorTabular
 from collections import defaultdict
 from intcr.pipeline.utils import retrieve_input, load_data, save_data
 from intcr.data import CATEGORICAL_ALPHABETS
+from intcr.clustering import PRE_CLUSTER_TRANSFORM_REGISTRY
+from scipy.spatial.distance import pdist
+import warnings
 
 
 ANCHORS_CONSTRUCTOR_PARAMS_KEY = 'constructor_params'
@@ -17,7 +21,8 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
     # prepare explainer
     constructor_params = config.get(ANCHORS_CONSTRUCTOR_PARAMS_KEY, {})
     explanation_params = config.get(ANCHORS_EXPLANATION_PARAMS_KEY, {})
-    ### - find better solution for this
+
+    # - find better solution for this
     dataset = []
     for s in split_samples.keys():
         inputs, _ = retrieve_input(config, preprocessing_folder, ANCHORS_INPUT_KEY, split_samples, s)
@@ -28,6 +33,7 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
     categorical_names = {
         i: CATEGORICAL_ALPHABETS[config[ANCHORS_CATEGORICAL_ALPHABET_KEY]] for i in range(n_features)
     }
+
     anchors_explainer = AnchorTabular(
         predictor=model.predict,
         feature_names=feature_names,
@@ -43,7 +49,7 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
         # prepare centers
         centers = dict()
         for split in split_samples.keys():
-            if best_clustering[split]['method'] not in cluster_centers:
+            if best_clustering[split]['method'] not in cluster_centers: # method did not provide centroids
                 curr_centers = []
                 labels = assignments[best_clustering[split]['method']][split]
                 idx = np.arange(len(labels))
@@ -51,7 +57,7 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
                     curr_centers.append(np.random.choice(idx[labels == i]))
                 centers[split] = np.array(curr_centers)
             else:
-                centers = cluster_centers[best_clustering[split]['method']][split]
+                centers[split] = cluster_centers[best_clustering[split]['method']][split]
 
         def generate_split_center_args():
             for sp, cntrs in centers.items():
@@ -81,3 +87,19 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
         anchors = load_data(anchors_fpath)
 
     return anchors
+
+
+def _are_overlapping():
+    pass
+
+
+def evaluate_anchors(anchors, assignments, model, split_samples, root, preproc_root, config, recompute=False):
+    evaluation_df = pd.DataFrame()
+    split_inputs = dict()
+    for split in split_samples.keys():
+        inputs, _ = retrieve_input(config, preproc_root, ANCHORS_INPUT_KEY, split_samples, split)
+        split_inputs[split] = inputs
+    for split, explanations in anchors.items():
+        for center_id, expl in explanations.items():
+            pass
+

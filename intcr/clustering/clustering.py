@@ -1,19 +1,74 @@
 import os
 from intcr.pipeline.config import simple_key_check
 from intcr.clustering import CLUSTERING_ALGOS_REGISTRY, CLUSTERING_EVALUATION_REGISTRY, \
-    CLUSTERING_EVALUATION_MULTIPLIER, DATA_VISUALIZATION_REGISTRY, CLUSTERING_ALGOS_CENTERS_GET_FN
+    CLUSTERING_EVALUATION_MULTIPLIER, DATA_VISUALIZATION_REGISTRY, CLUSTERING_ALGOS_CENTERS_GET_FN, \
+    PRE_CLUSTER_TRANSFORM_REGISTRY
 from intcr.pipeline.utils import load_data, save_data, retrieve_input, generate_preprocessing_instance
 import numpy as np
 from collections import defaultdict
 from ClusterEnsembles import cluster_ensembles
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.spatial.distance import pdist
+import warnings
 
 
 CLUSTERING_METHOD_KEY = 'method'
 CLUSTERING_PARAMS_KEY = 'params'
 CLUSTERING_INPUT_TYPE_KEY = 'input_type'
 CLUSTERING_PARAM4ID_KEY = 'param4identification'
+CLUSTERING_CENTROID_SELECTION_KEY = 'centroid_fallback_selection_method'
+CLUSTERING_CENTROID_SELECTION_DISTANCE_FN = 'centroid_selection_distance_fn'
+
+
+def _random_selection(X, labels, dist_fn_name=None):
+    idx = np.arange(len(labels))
+    selection = []
+    for i in np.unique(labels):
+        selection.append(np.random.choice(idx[labels==i]))
+    return selection
+
+
+def _check_if_dist_and_compute(X, labels, dist_fn_name):
+    dist_matrices = []
+    if dist_fn_name:
+        dist_fn = PRE_CLUSTER_TRANSFORM_REGISTRY[dist_fn_name]
+        for i in np.unique(labels):
+            idx = (labels == i)
+            curr_X = X[idx]
+            dist_matrices.append(pdist(curr_X, metric=dist_fn))
+    else: # it is assumed that X is a precomputed distance matrix
+        warnings.warn('If a distance function is not specified, it is assumed that '
+                      'the array passed is a distance matrix')
+        for i in np.unique(labels):
+            idx = (labels == i)
+            curr_X = X[idx]
+            curr_X = curr_X[:, idx]
+            dist_matrices.append(curr_X)
+    return dist_matrices
+
+
+def _mean_selection(X, labels, dist_fn_name=None):
+    dist_matrices = _check_if_dist_and_compute(X, labels, dist_fn_name)
+    selection = []
+    for dist in dist_matrices:
+        selection.append(np.argmin(np.mean(dist, axis=1)))
+    return selection
+
+
+def _median_selection(X, labels, dist_fn_name=None):
+    dist_matrices = _check_if_dist_and_compute(X, labels, dist_fn_name)
+    selection = []
+    for dist in dist_matrices:
+        selection.append(np.argmin(np.median(dist, axis=1)))
+    return selection
+
+
+CENTROID_FALLBACK_METHODS = {
+    'random': _random_selection,
+    'mean': _mean_selection,
+    'median': _median_selection
+}
 
 CONSENSUS_METHOD_KEY = 'method'
 CONSENSUS_PARAMS_KEY = 'params'
@@ -77,6 +132,18 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
             cluster_model = CLUSTERING_ALGOS_REGISTRY[method_name](**params)
             split_clusters = cluster_model.fit_predict(inputs)
             split_centers = CLUSTERING_ALGOS_CENTERS_GET_FN[method_name](cluster_model)
+            if split_centers is None:
+                center_selection_method = config.get(CLUSTERING_CENTROID_SELECTION_KEY, None)
+                if center_selection_method is None:
+                    raise RuntimeError('If clustering does not provide centroids, '
+                                       'a selection method has to be provided. '
+                                       'Add the parameter {} to your anchors config. Valid methods are {}'.format(
+                        CLUSTERING_CENTROID_SELECTION_KEY, CENTROID_FALLBACK_METHODS.keys()
+                    ))
+                else:
+                    dist_fn = config.get(CLUSTERING_CENTROID_SELECTION_DISTANCE_FN, None)
+                    selection_fn = CENTROID_FALLBACK_METHODS[center_selection_method]
+                    split_centers = selection_fn(inputs, split_clusters, dist_fn)
             save_data(model_path, cluster_model)
             save_data(clusters_assign_path, split_clusters)
             save_data(clusters_center_path, split_centers)
@@ -84,10 +151,9 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
             split_clusters = load_data(clusters_assign_path)
             split_centers = load_data(clusters_center_path)
         result = {
-            'labels': {clustering_id: {split: split_clusters}}
+            'labels': {clustering_id: {split: split_clusters}},
+            'centers': {clustering_id: {split: split_centers}}
         }
-        if split_centers is not None:
-            result.update({'centers': {clustering_id: {split: split_centers}}})
         return result
 
     results = []
