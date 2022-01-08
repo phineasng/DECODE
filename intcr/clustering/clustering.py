@@ -31,10 +31,13 @@ def _random_selection(X, labels, dist_fn_name=None):
 
 def _check_if_dist_and_compute(X, labels, dist_fn_name):
     dist_matrices = []
+    indeces = []
+    selected_idx = np.arange(len(labels))
     if dist_fn_name:
         dist_fn = PRE_CLUSTER_TRANSFORM_REGISTRY[dist_fn_name]
         for i in np.unique(labels):
             idx = (labels == i)
+            indeces.append(selected_idx[idx])
             curr_X = X[idx]
             dist_matrices.append(pdist(curr_X, metric=dist_fn))
     else: # it is assumed that X is a precomputed distance matrix
@@ -42,25 +45,26 @@ def _check_if_dist_and_compute(X, labels, dist_fn_name):
                       'the array passed is a distance matrix')
         for i in np.unique(labels):
             idx = (labels == i)
+            indeces.append(selected_idx[idx])
             curr_X = X[idx]
             curr_X = curr_X[:, idx]
             dist_matrices.append(curr_X)
-    return dist_matrices
+    return dist_matrices, indeces
 
 
 def _mean_selection(X, labels, dist_fn_name=None):
-    dist_matrices = _check_if_dist_and_compute(X, labels, dist_fn_name)
+    dist_matrices, indeces = _check_if_dist_and_compute(X, labels, dist_fn_name)
     selection = []
-    for dist in dist_matrices:
-        selection.append(np.argmin(np.mean(dist, axis=1)))
+    for i, dist in enumerate(dist_matrices):
+        selection.append(indeces[i][np.argmin(np.mean(dist, axis=1))])
     return selection
 
 
 def _median_selection(X, labels, dist_fn_name=None):
-    dist_matrices = _check_if_dist_and_compute(X, labels, dist_fn_name)
+    dist_matrices, indeces = _check_if_dist_and_compute(X, labels, dist_fn_name)
     selection = []
-    for dist in dist_matrices:
-        selection.append(np.argmin(np.median(dist, axis=1)))
+    for i, dist in enumerate(dist_matrices):
+        selection.append(indeces[i][np.argmin(np.median(dist, axis=1))])
     return selection
 
 
