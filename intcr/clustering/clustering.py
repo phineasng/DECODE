@@ -133,7 +133,7 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
             split_clusters = cluster_model.fit_predict(inputs)
             split_centers = CLUSTERING_ALGOS_CENTERS_GET_FN[method_name](cluster_model)
             if split_centers is None:
-                center_selection_method = config.get(CLUSTERING_CENTROID_SELECTION_KEY, None)
+                center_selection_method = conf.get(CLUSTERING_CENTROID_SELECTION_KEY, None)
                 if center_selection_method is None:
                     raise RuntimeError('If clustering does not provide centroids, '
                                        'a selection method has to be provided. '
@@ -141,7 +141,7 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
                         CLUSTERING_CENTROID_SELECTION_KEY, CENTROID_FALLBACK_METHODS.keys()
                     ))
                 else:
-                    dist_fn = config.get(CLUSTERING_CENTROID_SELECTION_DISTANCE_FN, None)
+                    dist_fn = conf.get(CLUSTERING_CENTROID_SELECTION_DISTANCE_FN, None)
                     selection_fn = CENTROID_FALLBACK_METHODS[center_selection_method]
                     split_centers = selection_fn(inputs, split_clusters, dist_fn)
             save_data(model_path, cluster_model)
