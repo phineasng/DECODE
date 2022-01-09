@@ -201,7 +201,7 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
             if sp_i == sp_j:
                 cluster_split_tp += prediction_matrix[i, j]
             cluster_split_fp = np.sum(prediction_matrix[i]) - cluster_split_tp
-            cluster_split_fn = split_size - tp
+            cluster_split_fn = split_size - cluster_split_fp
             cluster_split_tn = (n_samples - split_size) - cluster_split_fn
 
         cluster_split_accuracy[anchor_id] = (cluster_split_tp + cluster_split_tn) / (cluster_split_tp + cluster_split_tn + cluster_split_fp + cluster_split_fn)
