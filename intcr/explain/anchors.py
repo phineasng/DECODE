@@ -183,7 +183,7 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
         tp = prediction_matrix[i,i]
         fp = np.sum(prediction_matrix[i]) - tp
         fn = cluster_size - tp
-        tn = (n_samples - cluster_size) - fn
+        tn = (n_samples - cluster_size) - fp
 
         cluster_accuracy[anchor_id] = (tp+tn)/(tp+tn+fp+fn)
         cluster_precision[anchor_id] = tp/(tp+fp)
@@ -198,8 +198,8 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
             if sp_i == sp_j:
                 cluster_split_tp += prediction_matrix[i, j]
         cluster_split_fp = np.sum(prediction_matrix[i]) - cluster_split_tp
-        cluster_split_fn = split_size - cluster_split_fp
-        cluster_split_tn = (n_samples - split_size) - cluster_split_fn
+        cluster_split_fn = split_size - cluster_split_tp
+        cluster_split_tn = n_samples - split_size - cluster_split_fp
 
         cluster_split_accuracy[anchor_id] = (cluster_split_tp + cluster_split_tn) / (cluster_split_tp + cluster_split_tn + cluster_split_fp + cluster_split_fn)
         cluster_split_precision[anchor_id] = cluster_split_tp / (cluster_split_tp + cluster_split_fp)
@@ -214,7 +214,7 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
         tp = split_prediction_matrix[i,i]
         fp = np.sum(split_prediction_matrix[i]) - tp
         fn = split_size - tp
-        tn = (n_samples - split_size) - fn
+        tn = (n_samples - split_size) - fp
 
         split_accuracy[sp_i] = (tp + tn) / (tp + tn + fp + fn)
         split_precision[sp_i] = tp / (tp + fp)
@@ -240,7 +240,9 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
         split_metrics.append([sp_i, "precision", split_precision[sp_i]])
         split_metrics.append([sp_i, "accuracy", split_accuracy[sp_i]])
         split_metrics.append([sp_i, "recall", split_recall[sp_i]])
+        print(type(split_precision[sp_i]))
     split_metrics_df = pd.DataFrame(np.stack(split_metrics), columns=metrics_ids)
+    split_metrics_df["value"] = split_metrics_df["value"].astype(np.float32)
     results = {
         "cluster_metrics": cluster_metrics_df,
         "cluster_split_metrics": cluster_split_metrics_df,
