@@ -260,5 +260,4 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
     generate_figure(cluster_split_metrics_df, os.path.join(root, 'cluster_split_metrics.png'))
     generate_figure(split_metrics_df, os.path.join(root, 'split_metrics.png'))
 
-
     return results
