@@ -190,9 +190,6 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
         cluster_recall[anchor_id] = tp/(tp+fn)
 
         cluster_split_tp = 0
-        cluster_split_fp = 0
-        cluster_split_tn = 0
-        cluster_split_fn = 0
 
         sp_i = anchor_id[0]
         split_size = len(split_samples[sp_i])
@@ -200,9 +197,9 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
             sp_j = explanation_id_list[j][0]
             if sp_i == sp_j:
                 cluster_split_tp += prediction_matrix[i, j]
-            cluster_split_fp = np.sum(prediction_matrix[i]) - cluster_split_tp
-            cluster_split_fn = split_size - cluster_split_fp
-            cluster_split_tn = (n_samples - split_size) - cluster_split_fn
+        cluster_split_fp = np.sum(prediction_matrix[i]) - cluster_split_tp
+        cluster_split_fn = split_size - cluster_split_fp
+        cluster_split_tn = (n_samples - split_size) - cluster_split_fn
 
         cluster_split_accuracy[anchor_id] = (cluster_split_tp + cluster_split_tn) / (cluster_split_tp + cluster_split_tn + cluster_split_fp + cluster_split_fn)
         cluster_split_precision[anchor_id] = cluster_split_tp / (cluster_split_tp + cluster_split_fp)
@@ -247,7 +244,8 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
     results = {
         "cluster_metrics": cluster_metrics_df,
         "cluster_split_metrics": cluster_split_metrics_df,
-        "split_metrics": split_metrics_df
+        "split_metrics": split_metrics_df,
+        "overlap": overlap_matrix
     }
     metrics_fpath = os.path.join(root, 'metrics')
     save_data(metrics_fpath, results)
