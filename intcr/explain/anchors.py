@@ -143,7 +143,6 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
         inputs, _ = retrieve_input(config, preproc_root, ANCHORS_INPUT_KEY, split_samples, split)
         labels = assignments[best_clustering[split]['method']][split]
         samples_list_per_split[split] = inputs
-        explanations_per_split[split].append(explanations)
         for center_id, expl in explanations.items():
             explanation_list.append(expl)
             explanation_id_list.append((split, center_id))
@@ -152,6 +151,7 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
             samples_list_per_cluster.append(inputs[labels == center_label])
             cluster_lengths.append(len(samples_list_per_cluster[-1]))
             n_samples += cluster_lengths[-1]
+            explanations_per_split[split].append(expl)
     n_explanations = len(explanation_list)
     n_splits = len(anchors)
 
