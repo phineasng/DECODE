@@ -102,6 +102,13 @@ def _n_feats_overlapping(anchor_1, anchor_2):
     return len(features_1.intersection(features_2))
 
 
+def _n_feats_complete_overlapping(anchor_1, anchor_2):
+    features_1 = _feature_set(anchor_1)
+    features_2 = _feature_set(anchor_2)
+    intersect = features_1.intersection(features_2)
+    return (intersect == features_1) or (intersect == features_2)
+
+
 def anchor_verification(anchor, samples):
     """
     Given an anchor, returns which samples fulfill the anchor
@@ -156,11 +163,15 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
     n_splits = len(anchors)
 
     overlap_matrix = np.zeros((n_explanations, n_explanations))  # count the number of overlapping rules
+    complete_overlap_matrix = np.zeros((n_explanations, n_explanations))  # count the number of overlapping rules
     prediction_matrix = np.zeros((n_explanations, n_explanations))  # compute how many samples of a cluster fulfill a certain anchor
     for i in range(n_explanations):
         for j in range(n_explanations):
-            if i < j:
+            if i <= j:
                 overlap_matrix[i,j] = _n_feats_overlapping(explanation_list[i], explanation_list[j])
+                complete_overlap_matrix[i,j] = _n_feats_complete_overlapping(explanation_list[i], explanation_list[j])
+                overlap_matrix[j, i] = overlap_matrix[i,j]
+                complete_overlap_matrix[j, i] = complete_overlap_matrix[i,j]
             prediction_matrix[i, j] = np.sum(anchor_verification(explanation_list[i], samples_list_per_cluster[j]))
     split_prediction_matrix = np.zeros((n_splits, n_splits))
     for i, sp_i in enumerate(sorted(anchors.keys())):
@@ -247,7 +258,8 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
         "cluster_metrics": cluster_metrics_df,
         "cluster_split_metrics": cluster_split_metrics_df,
         "split_metrics": split_metrics_df,
-        "overlap": overlap_matrix
+        "overlap": overlap_matrix,
+        "complete_overlap": complete_overlap_matrix
     }
     metrics_fpath = os.path.join(root, 'metrics')
     save_data(metrics_fpath, results)
