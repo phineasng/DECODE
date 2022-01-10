@@ -146,10 +146,12 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
     split_ids = defaultdict(list)
     n_samples = 0
     samples_list_per_split = {}
+    all_samples = []
     for split, explanations in anchors.items():
         inputs, _ = retrieve_input(config, preproc_root, ANCHORS_INPUT_KEY, split_samples, split)
         labels = assignments[best_clustering[split]['method']][split]
         samples_list_per_split[split] = inputs
+        all_samples.append(inputs)
         for center_id, expl in explanations.items():
             explanation_list.append(expl)
             explanation_id_list.append((split, center_id))
@@ -161,11 +163,14 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
             explanations_per_split[split].append(expl)
     n_explanations = len(explanation_list)
     n_splits = len(anchors)
+    all_samples = np.concatenate(all_samples, axis=0)
 
     overlap_matrix = np.zeros((n_explanations, n_explanations))  # count the number of overlapping rules
     complete_overlap_matrix = np.zeros((n_explanations, n_explanations))  # count the number of overlapping rules
     prediction_matrix = np.zeros((n_explanations, n_explanations))  # compute how many samples of a cluster fulfill a certain anchor
+    per_sample_prediction = []
     for i in range(n_explanations):
+        per_sample_prediction.append(anchor_verification(explanation_list[i], all_samples))
         for j in range(n_explanations):
             if i <= j:
                 overlap_matrix[i,j] = _n_feats_overlapping(explanation_list[i], explanation_list[j])
@@ -174,6 +179,7 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
                 complete_overlap_matrix[j, i] = complete_overlap_matrix[i,j]
             prediction_matrix[i, j] = np.sum(anchor_verification(explanation_list[i], samples_list_per_cluster[j]))
     split_prediction_matrix = np.zeros((n_splits, n_splits))
+    per_sample_prediction = np.stack(per_sample_prediction, axis=0)
     for i, sp_i in enumerate(sorted(anchors.keys())):
         for j, sp_j in enumerate(sorted(anchors.keys())):
             split_prediction_matrix[i, j] = np.sum(multi_anchor_verification(explanations_per_split[sp_i], samples_list_per_split[sp_j]))
@@ -263,6 +269,7 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
     }
     metrics_fpath = os.path.join(root, 'metrics')
     save_data(metrics_fpath, results)
+    save_data(os.path.join(root, 'per_sample_prediction'), per_sample_prediction)
 
     # visualize
     def generate_figure(df, figname):
