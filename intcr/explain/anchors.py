@@ -283,7 +283,8 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
         "cluster_split_metrics": cluster_split_metrics_df,
         "split_metrics": split_metrics_df,
         "overlap": overlap_matrix,
-        "complete_overlap": complete_overlap_matrix
+        "complete_overlap": complete_overlap_matrix,
+        "contradictory_overlap": contradictory_overlaps
     }
     metrics_fpath = os.path.join(root, 'metrics')
     save_data(metrics_fpath, results)
