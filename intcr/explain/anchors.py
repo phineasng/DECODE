@@ -88,10 +88,14 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
     return anchors
 
 
+def _feature_positions(anchor):
+    return set(anchor.data["raw"]["feature"])
+
+
 def _feature_set(anchor):
     feature_set = set()
     raw = anchor.data["raw"]
-    for feat in raw["feature"]:
+    for feat in _feature_positions(anchor):
         feature_set.add((feat, int(raw["instance"][feat])))
     return feature_set
 
@@ -107,6 +111,18 @@ def _n_feats_complete_overlapping(anchor_1, anchor_2):
     features_2 = _feature_set(anchor_2)
     intersect = features_1.intersection(features_2)
     return (intersect == features_1) or (intersect == features_2)
+
+
+def _contradictory_overlapping(anchor_1, anchor_2):
+    feat_pos_1 = _feature_positions(anchor_1)
+    feat_pos_2 = _feature_positions(anchor_2)
+    raw1 = anchor_1.data["raw"]
+    raw2 = anchor_2.data["raw"]
+    cnt = 0
+    for pos in feat_pos_1.intersection(feat_pos_2):
+        if raw1["instance"][pos] != raw2["instance"][pos]:
+            cnt += 1
+    return cnt
 
 
 def anchor_verification(anchor, samples):
@@ -166,6 +182,7 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
     all_samples = np.concatenate(all_samples, axis=0)
 
     overlap_matrix = np.zeros((n_explanations, n_explanations))  # count the number of overlapping rules
+    contradictory_overlaps = np.zeros((n_explanations, n_explanations))
     complete_overlap_matrix = np.zeros((n_explanations, n_explanations))  # count the number of overlapping rules
     prediction_matrix = np.zeros((n_explanations, n_explanations))  # compute how many samples of a cluster fulfill a certain anchor
     per_sample_prediction = []
@@ -174,6 +191,7 @@ def evaluate_anchors(anchors, assignments, best_clustering, split_samples, root,
         for j in range(n_explanations):
             if i <= j:
                 overlap_matrix[i,j] = _n_feats_overlapping(explanation_list[i], explanation_list[j])
+                contradictory_overlaps[i, j] = _contradictory_overlapping(explanation_list[i], explanation_list[j])
                 complete_overlap_matrix[i,j] = _n_feats_complete_overlapping(explanation_list[i], explanation_list[j])
                 overlap_matrix[j, i] = overlap_matrix[i,j]
                 complete_overlap_matrix[j, i] = complete_overlap_matrix[i,j]
