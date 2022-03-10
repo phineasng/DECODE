@@ -58,7 +58,8 @@ class PMTnet:
         ranks = []
         for i, tcr, hla_antigen in enumerate(zip(encoded_tcrs, encoded_hlas_antigens)):
             ranks.append(self.predict_with_bg_single(tcr, hla_antigen))
-        return ranks
+        ranks = np.array(ranks)
+        return ranks < 0.5
 
     def predict_with_bg_single(self, encoded_tcr, encoded_hla_antigen):
         rank, prediction = self._predict_with_bg_single(encoded_tcr, encoded_hla_antigen, self._tcr_neg_df_1k)
@@ -89,3 +90,7 @@ class PMTnetFixedHLAAntigen(PMTnet):
     def predict(self, tcr, *args):
         encoded_tcr = self.encode_tcr(tcr)
         return self.predict_with_bg(encoded_tcr, self._encoded_hla_antigen)
+
+
+def load_pmt_net_fixed_hla_antigen(model_config, *args, **kwargs):
+    return PMTnetFixedHLAAntigen(**model_config)
