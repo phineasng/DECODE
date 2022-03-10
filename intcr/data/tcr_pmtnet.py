@@ -22,4 +22,4 @@ def get_pmtnet_dataset(fpath):
 
 
 def get_pmtnet_cdr3_only_dataset(fpath):
-    return get_pmtnet_dataset(fpath)[0]['tcr']
+    return get_pmtnet_dataset(fpath)[0]['tcr'], None
