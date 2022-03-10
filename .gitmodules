@@ -13,3 +13,6 @@
 [submodule "extern/anarci"]
 	path = extern/anarci
 	url = https://github.com/oxpig/ANARCI.git
+[submodule "intcr/extern/pmtnet"]
+	path = intcr/extern/pmtnet
+	url = https://github.com/tianshilu/pMTnet.git
