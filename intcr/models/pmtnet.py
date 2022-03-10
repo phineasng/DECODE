@@ -76,14 +76,14 @@ class PMTnet:
 
 
 class PMTnetFixedHLAAntigen(PMTnet):
-    def __init__(self, *, antigen: str, hla: str, **kwargs):
+    def __init__(self, *, antigen: str, hla: str, hla_lib_dir: str, **kwargs):
         super(PMTnetFixedHLAAntigen, self).__init__(**kwargs)
-        self._preprocess_hla_antigen(hla, antigen)
+        self._preprocess_hla_antigen(hla, antigen, hla_lib_dir)
 
-    def _preprocess_hla_antigen(self, hla, antigen):
+    def _preprocess_hla_antigen(self, hla, antigen, hla_lib_dir):
         self._hla_str = hla
         self._antigen_str = antigen
-        self._hla_mapped = preprocess_hla([self._hla_str])
+        self._hla_mapped = preprocess_hla([self._hla_str], hla_lib_dir=hla_lib_dir)
         self._antigen_mapped = preprocess_antigen([self._antigen_str])
         self._encoded_hla_antigen = self.encode_hla_antigen(self._antigen_mapped, self._hla_mapped)
 
