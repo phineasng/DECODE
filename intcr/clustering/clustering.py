@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.spatial.distance import pdist
 import warnings
+from joblib import Parallel, delayed
 
 
 CLUSTERING_METHOD_KEY = 'method'

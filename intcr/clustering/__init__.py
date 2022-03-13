@@ -3,7 +3,8 @@ from sklearn.cluster import (KMeans, DBSCAN, MiniBatchKMeans,
                              Birch, OPTICS, SpectralBiclustering, SpectralCoclustering)
 from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score, silhouette_score
 from sklearn.manifold import TSNE, SpectralEmbedding, LocallyLinearEmbedding
-from intcr.data.tcr_titan import blosum2levenshtein, blosum_embedding2idx
+from intcr.data.tcr_titan import blosum2levenshtein, blosum_embedding2idx, blosum2nwalign
+from intcr.data.tcr_pmtnet import aatchley2levenshtein, aatchley_pmtnet_embedding2idx
 from sklearn_extra.cluster import KMedoids
 
 
@@ -17,7 +18,10 @@ VISUALIZATION_KEY = 'cluster_visualization'
 
 PRE_CLUSTER_TRANSFORM_REGISTRY = {
     'blosum_emb2levenshtein': blosum2levenshtein,
-    'blosum_emb2categorical': blosum_embedding2idx
+    'blosum_emb2nwalign': blosum2nwalign,
+    'blosum_emb2categorical': blosum_embedding2idx,
+    'aatchley_pmtnet_emb2levenshtein': aatchley2levenshtein,
+    'aatchley_pmtnet_emb2categorical': aatchley_pmtnet_embedding2idx
 }
 
 CLUSTERING_ALGOS_REGISTRY = {

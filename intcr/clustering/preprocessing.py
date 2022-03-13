@@ -34,7 +34,7 @@ def pre_clustering_transform(precluster_root, config, split_samples, model, data
 
         if recomp_flag or not os.path.exists(out_fpath):
             transform_fn = PRE_CLUSTER_TRANSFORM_REGISTRY[transform_fn_name]
-            transformed_samples = transform_fn(samples[split])
+            transformed_samples = transform_fn(samples[split], model=model)
             save_data(out_fpath, transformed_samples)
 
     # to rewrite for parallelization
