@@ -6,6 +6,8 @@ from pytoda.proteins import ProteinFeatureLanguage
 from pytoda.smiles import SMILESLanguage
 from pytoda.datasets import DrugAffinityDataset
 from pytoda.proteins.processing import BLOSUM62
+import os
+import nwalign3 as nw
 
 
 AA_LANG_KEY = 'protein_language_fpath'
@@ -139,7 +141,37 @@ def _flattenblosumembedding2levenshtein(x, y):
     return lev_dist(blosum_embedding2str(x.reshape(-1, 26)), blosum_embedding2str(y.reshape(-1, 26)))
 
 
-def blosum2levenshtein(samples):
+def _flattenblosumembedding2nwalign(x, y, matrix):
+    x_str = blosum_embedding2str(x.reshape(-1, 26))
+    y_str = blosum_embedding2str(y.reshape(-1, 26))
+    alignment = nw.global_align(x_str, y_str, matrix=matrix)
+    self_score_0 = nw.score_alignment(
+        alignment[0],
+        alignment[0],
+        matrix=matrix,
+        gap_open=-5,
+        gap_extend=-2
+    )
+    self_score_1 = nw.score_alignment(
+        alignment[1],
+        alignment[1],
+        matrix=matrix,
+        gap_open=-5,
+        gap_extend=-2
+    )
+    Z = max(self_score_0, self_score_1)
+    score = nw.score_alignment(
+        alignment[0],
+        alignment[1],
+        matrix=matrix,
+        gap_open=-5,
+        gap_extend=-2
+    )
+    distance = 1 - score/float(Z)
+    return distance
+
+
+def blosum2levenshtein(samples, *args, **kwargs):
     """
     Turn blosum encoded samples to levenshtein matrix
 
@@ -150,7 +182,20 @@ def blosum2levenshtein(samples):
     return squareform(pdist(flatten_samples, metric=_flattenblosumembedding2levenshtein))
 
 
-def blosum_embedding2idx(samples):
+def blosum2nwalign(samples, *, matrix=None, **kwargs):
+    """
+    Turn blosum encoded samples to levenshtein matrix
+
+    Args:
+        samples (np.array): samples to convert
+    """
+    flatten_samples = samples.reshape(len(samples), -1)
+    if matrix is None:
+        matrix = os.getenv('NWALIGN_MATRIX')
+    return squareform(pdist(flatten_samples, metric=lambda x, y: _flattenblosumembedding2nwalign(x, y, matrix=matrix)))
+
+
+def blosum_embedding2idx(samples, *args, **kwargs):
     """
     Turn blosum encoded samples to categorical idx
     """

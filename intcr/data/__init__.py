@@ -10,5 +10,6 @@ DATASET_GETTERS = {
     'cdr3_only_pmtnet': get_pmtnet_cdr3_only_dataset,
 }
 CATEGORICAL_ALPHABETS = {
-    'blosum_categorical': BLOSUM_IDX2KEY
+    'blosum_categorical': BLOSUM_IDX2KEY,
+    'aatchley_pmtnet_categorical': lambda model: model._aatchley_idx2key
 }
