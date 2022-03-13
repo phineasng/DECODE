@@ -29,8 +29,11 @@ def generate_anchors(assignments, cluster_centers, best_clustering, config, prep
     dataset = np.concatenate(dataset, axis=0)
     n_features = len(dataset[0])
     feature_names = ['{}'.format(i) for i in range(n_features)]
+    alphabet = CATEGORICAL_ALPHABETS[config[ANCHORS_CATEGORICAL_ALPHABET_KEY]]
+    if callable(alphabet):
+        alphabet = alphabet(model)
     categorical_names = {
-        i: CATEGORICAL_ALPHABETS[config[ANCHORS_CATEGORICAL_ALPHABET_KEY]] for i in range(n_features)
+        i: alphabet for i in range(n_features)
     }
 
     anchors_explainer = AnchorTabular(
