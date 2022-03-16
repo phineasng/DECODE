@@ -83,7 +83,9 @@ def preprocess(filedir, HLA_seq_lib):
     TCR_list=dataset['CDR3'].tolist()
     antigen_list=dataset['Antigen'].tolist()
     HLA_list=dataset['HLA'].tolist()
-    return TCR_list,antigen_list,HLA_list
+    if 'label' in dataset.columns:
+        labels = dataset['label']
+    return TCR_list,antigen_list,HLA_list,labels
 
 
 def aamapping_TCR(peptideSeq,aa_dict):
@@ -269,7 +271,7 @@ def preprocess_hla(dataset, HLA_seq_lib, encoding_method=DEFAULT_ENCODING_METHOD
 
 def get_pmtnet_dataset(fpath, aatchley_dir, hla_lib_dir):
     HLA_seq_lib = create_hla_seq_lib(hla_lib_dir)
-    tcr, antigen, hla = preprocess(fpath, HLA_seq_lib)
+    tcr, antigen, hla, labels = preprocess(fpath, HLA_seq_lib)
     aa_dict_atchley, _ = load_aatchley_dict(aatchley_dir)
     TCR_array = TCRMap(tcr, aa_dict_atchley)
     antigen_array = preprocess_antigen(antigen)
@@ -278,12 +280,12 @@ def get_pmtnet_dataset(fpath, aatchley_dir, hla_lib_dir):
         'tcr': TCR_array,
         'antigen': antigen_array,
         'hla': HLA_array
-    }, None
+    }, labels
 
 
 def get_pmtnet_cdr3_only_dataset(dataset_params):
-    dataset = get_pmtnet_dataset(**dataset_params)[0]['tcr']
-    return dataset, None
+    dataset, labels = get_pmtnet_dataset(**dataset_params)
+    return dataset['tcr'], labels
 
 
 def pearson_correlation_f(y_true, y_pred):
