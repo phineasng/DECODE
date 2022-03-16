@@ -3,6 +3,7 @@ Data processing utils for the interpretability pipeline
 """
 import torch
 import numpy as np
+from intcr.models.utils import batch_predict
 
 
 def split_bind_nonbind(dataset: np.array, model, batch_size: int=None):
@@ -16,24 +17,10 @@ def split_bind_nonbind(dataset: np.array, model, batch_size: int=None):
         batch_size: int denoting if the dataset should be processed in batches. If None, the dataset will be processed
                     in a single step
     """
-    if batch_size is None:
-        batch_size = len(dataset)
-
-    progress = range(0, len(dataset), batch_size)
-
-    predictions = []
-    for i in progress:
-        x = dataset[i:i+batch_size]
-        predictions.append(model.predict(x))
-
-    predictions = np.concatenate(predictions, axis=0)
+    predictions = batch_predict(dataset, model, batch_size)
     non_bind_idx = (predictions == 0)
     bind_idx = (predictions == 1)
     return {
         0: dataset[non_bind_idx],
         1: dataset[bind_idx]
     }
-
-
-def preprocess4clustering(split_samples, preprocess_fn, preprocess_params):
-    pass

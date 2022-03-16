@@ -5,13 +5,14 @@ from intcr.pipeline.processing import split_bind_nonbind
 from intcr.pipeline.config import EXPERIMENT_ROOT_KEY
 from intcr.pipeline.environment import \
     setup_folder, setup_preparation_root, \
-    retrieve_prepared_data, save_prepared_data, setup_clustering_root, setup_explainer_root
+    retrieve_prepared_data, save_prepared_data, setup_clustering_root, setup_explainer_root, save_data
 from intcr.clustering import CLUSTERING_KEY, PRECLUST_TRANSFORM_KEY, CLUSTERING_ALGOS_KEY, CONSENSUS_KEY, \
     SELECTION_KEY, VISUALIZATION_KEY
 from intcr.clustering.preprocessing import pre_clustering_transform
 from intcr.clustering.clustering import clustering, consensus_clustering, select_best_clustering, visualize_clusters
 from intcr.explain.anchors import generate_anchors, evaluate_anchors
 from intcr.explain import EXPLAINER_KEY, ANCHORS_KEY
+from intcr.models.utils import test_model
 from copy import deepcopy
 from intcr.pipeline.logging import Logger
 
@@ -19,7 +20,7 @@ from intcr.pipeline.logging import Logger
 global _CURRENT_LOGGER
 
 
-def run_pipeline(config_fpath, step2recompute=100, verbose_level=40):
+def run_pipeline(config_fpath, step2recompute=100, verbose_level=40, test=False):
     device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     with open(config_fpath, 'r') as in_config:
         config = json.load(in_config)
@@ -53,6 +54,16 @@ def run_pipeline(config_fpath, step2recompute=100, verbose_level=40):
     _CURRENT_LOGGER.debug('{}'.format(X))
     _CURRENT_LOGGER.debug('{}'.format(y))
 
+    if test:
+        accuracy, conf_matrix = test_model(X, y, model, batch_size)
+        eval_fpath = os.path.join(preparation_step_root, 'model_evaluation')
+        save_data(eval_fpath,
+                  {
+                      'accuracy': accuracy,
+                      'confusion_matrix': conf_matrix
+                  })
+        print('Accuracy: {}'.format(accuracy))
+        print('Confusion Matrix: \n{}'.format(conf_matrix))
     _CURRENT_LOGGER.info('Splitting dataset.')
     if (step2recompute > 0) and already_prepared:
         _CURRENT_LOGGER.debug('Using precomputed data.')
@@ -138,6 +149,7 @@ if __name__ == '__main__':
                              '(30) Warning.\n'
                              '(40) Error (Default).\n'
                              '(50) Critical.\n', type=int)
+    parser.add_argument('--test', required=False, action='store_true')
 
     args = parser.parse_args()
-    run_pipeline(args.config, args.step2recompute, args.verbose)
+    run_pipeline(args.config, args.step2recompute, args.verbose, args.test)
