@@ -12,11 +12,12 @@ class PMTnet:
     pMTnet as per reference implementation at https://github.com/tianshilu/pMTnet/blob/master/pMTnet.py (line 279)
     """
     def __init__(self, *, tcr_encoder_fpath, hla_antigen_encoder_fpath, bg_1k_fpath, bg_10k_fpath,
-                 classifier_fpath=None, aatchley_dir: str=None,):
+                 classifier_fpath=None, aatchley_dir: str=None, threshold=0.5):
         self._create_classifier(classifier_fpath)
         self._create_tcr_encoder(tcr_encoder_fpath)
         self._create_hla_antigen_encoder(hla_antigen_encoder_fpath)
         self._load_bg_negatives(bg_1k_fpath, bg_10k_fpath)
+        self._thr = threshold
         self._aatchley_dict = None
         self._aatchley_idx2key = None
         self._aatchley_key2idx = None
@@ -73,7 +74,7 @@ class PMTnet:
         return predictions
 
     def _threshold(self, ranks):
-        return (ranks < 0.5).astype(np.int)
+        return (ranks < self._thr).astype(np.int)
 
     def predict_with_bg_single(self, encoded_tcr, encoded_hla_antigen):
         rank, prediction = self._predict_with_bg_single(encoded_tcr, encoded_hla_antigen, self._tcr_neg_df_1k)
