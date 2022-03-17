@@ -4,6 +4,6 @@
 [submodule "intcr/extern/pytoda"]
 	path = intcr/extern/pytoda
 	url = git@github.com:PaccMann/paccmann_datasets.git
-[submodule "extern/anarci"]
-	path = extern/anarci
+[submodule "intcr/extern/anarci"]
+	path = intcr/extern/anarci
 	url = https://github.com/oxpig/ANARCI.git
