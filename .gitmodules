@@ -13,3 +13,6 @@
 [submodule "extern/anarci"]
 	path = extern/anarci
 	url = https://github.com/oxpig/ANARCI.git
+[submodule "intcr/extern/clusterensembles"]
+	path = intcr/extern/clusterensembles
+	url = https://github.com/tsano430/ClusterEnsembles.git
