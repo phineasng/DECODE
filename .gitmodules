@@ -4,15 +4,6 @@
 [submodule "intcr/extern/pytoda"]
 	path = intcr/extern/pytoda
 	url = git@github.com:PaccMann/paccmann_datasets.git
-[submodule "extern/TITAN"]
-	path = extern/TITAN
-	url = https://github.com/PaccMann/TITAN.git
-[submodule "extern/paccmann_datasets"]
-	path = extern/paccmann_datasets
-	url = https://github.com/PaccMann/paccmann_datasets.git
 [submodule "extern/anarci"]
 	path = extern/anarci
 	url = https://github.com/oxpig/ANARCI.git
-[submodule "intcr/extern/clusterensembles"]
-	path = intcr/extern/clusterensembles
-	url = https://github.com/tsano430/ClusterEnsembles.git
