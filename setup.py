@@ -43,13 +43,13 @@ except FileNotFoundError:
 
 # TODO: Update these values according to the name of the module.
 setup(
-    name="FLAN",
-    version=read_version("flan/__init__.py"),  # single place for version
-    description="Installable package for FLAN-related projects.",
+    name="DECODE",
+    version=read_version("intcr/__init__.py"),  # single place for version
+    description="Installable package for DECODE.",
     long_description=open("README.md").read(),
-    url="https://github.ibm.com/SysBio/flan_missing_values",
-    author="Nicolas Deutschmann, An-phi Nguyen",
-    author_email="deu@zurich.ibm.com, uye@zurich.ibm.com",
+    url="https://github.com/phineasng/DECODE",
+    author="An-phi Nguyen, Anna Maria Weber",
+    author_email="uye@zurich.ibm.com, wbr@zurich.ibm.com",
     # the following exclusion is to prevent shipping of tests.
     # if you do include them, add pytest to the required packages.
     packages=find_packages(".", exclude=["*tests*"]),
@@ -58,7 +58,7 @@ setup(
     #    [console_scripts]
     #    salutation=blueprint.complex_module.core:formal_introduction
     #""",
-    scripts=["bin/run_experiment.py"],
+    scripts=["bin/run_interpretability_pipeline"],
     extras_require={
         "vcs": VCS_REQUIREMENTS,
         "test": ["pytest", "pytest-cov"],
