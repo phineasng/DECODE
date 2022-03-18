@@ -1,25 +1,25 @@
 {
-  "root": "/home/phineas/Documents/repos/interpret_tcr/results/pmtnet_test",
+  "root": "<PATH_WHERE_TO_SAVE_RESULTS>",
   "model": {
     "model_id": "pmtnet_fixed_hla_antigen",
     "model_params": {
       "hla": "A*03:01",
       "antigen": "KLGGALQAK",
-      "hla_lib_dir": "/home/phineas/Documents/repos/interpret_tcr/data/pmtnet/data/library/hla_library",
-      "tcr_encoder_fpath": "/home/phineas/Documents/repos/interpret_tcr/data/pmtnet/model/h5_file/TCR_encoder_30.h5",
-      "hla_antigen_encoder_fpath": "/home/phineas/Documents/repos/interpret_tcr/data/pmtnet/model/h5_file/HLA_antigen_encoder_60.h5",
-      "bg_1k_fpath": "/home/phineas/Documents/repos/interpret_tcr/data/pmtnet/data/library/bg_tcr_library/TCR_output_1k.csv",
-      "bg_10k_fpath": "/home/phineas/Documents/repos/interpret_tcr/data/pmtnet/data/library/bg_tcr_library/TCR_output_10k.csv",
-      "aatchley_dir": "/home/phineas/Documents/repos/interpret_tcr/data/pmtnet/data/library/Atchley_factors.csv",
-      "classifier_fpath": "/home/phineas/Documents/repos/interpret_tcr/data/pmtnet/model/h5_file/weights.h5"
+      "hla_lib_dir": "<PATH_TO_REPO_ROOT>/data/pmtnet/data/library/hla_library",
+      "tcr_encoder_fpath": "<PATH_TO_REPO_ROOT>/data/pmtnet/model/h5_file/TCR_encoder_30.h5",
+      "hla_antigen_encoder_fpath": "<PATH_TO_REPO_ROOT>/data/pmtnet/model/h5_file/HLA_antigen_encoder_60.h5",
+      "bg_1k_fpath": "<PATH_TO_REPO_ROOT>/data/pmtnet/data/library/bg_tcr_library/TCR_output_1k.csv",
+      "bg_10k_fpath": "<PATH_TO_REPO_ROOT>/data/pmtnet/data/library/bg_tcr_library/TCR_output_10k.csv",
+      "aatchley_dir": "<PATH_TO_REPO_ROOT>/data/pmtnet/data/library/Atchley_factors.csv",
+      "classifier_fpath": "<PATH_TO_REPO_ROOT>/data/pmtnet/model/h5_file/weights.h5"
     }
   },
   "dataset": {
     "dataset_id": "cdr3_only_pmtnet",
     "dataset_params": {
-      "fpath": "/home/phineas/Documents/repos/interpret_tcr/data/pmtnet/data/pmtnet_debug.csv",
-      "aatchley_dir": "/home/phineas/Documents/repos/interpret_tcr/data/pmtnet/data/library/Atchley_factors.csv",
-      "hla_lib_dir": "/home/phineas/Documents/repos/interpret_tcr/data/pmtnet/data/library/hla_library"
+      "fpath": "<PATH_TO_REPO_ROOT>/data/pmtnet/data/pMTnet_Interaction_file_valid_reduced2.csv",
+      "aatchley_dir": "<PATH_TO_REPO_ROOT>/data/pmtnet/data/library/Atchley_factors.csv",
+      "hla_lib_dir": "<PATH_TO_REPO_ROOT>/data/pmtnet/data/library/hla_library"
     }
   },
   "clustering": {
@@ -40,7 +40,7 @@
         "param4identification": "n_clusters",
 	"centroid_fallback_selection_method": "median",
         "params": {
-          "n_clusters": 5,
+          "n_clusters": 20,
           "affinity": "precomputed",
           "linkage": "average"
         }
@@ -71,7 +71,12 @@
         "seed": 123
       },
       "explanation_params": {
-      	"stop_on_first": true
+        "threshold": 0.8,
+        "tau": 0.3,
+        "beam_size": 1,
+        "batch_size": 50,
+        "coverage_samples": 500,
+        "stop_on_first": true
       },
       "input_type": "categorical",
       "categorical_alphabet": "blosum_categorical"

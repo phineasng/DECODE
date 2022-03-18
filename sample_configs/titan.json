@@ -1,5 +1,5 @@
 {
-  "root": "<EXPERIMENT_ROOT>",
+  "root": "<PATH_WHERE_TO_SAVE_RESULTS>",
   "model": {
     "model_id": "titan_fixed_epitope",
     "model_params": {
@@ -16,18 +16,18 @@
         "receptor_filters": [26, 26, 26], "receptor_kernel_sizes": [[3, 26], [7, 26], [11, 26]],
         "ligand_kernel_sizes": [[3, 26], [5, 26], [7, 26]], "ligand_vocabulary_size": 571,
         "receptor_vocabulary_size": 28, "ligand_as": "smiles", "number_of_parameters": 2216491},
-      "ckpt": "<PATH_TO_DATA>/data/titan_model/smi_full_fold1_published_code/weights/best_ROC-AUC_bimodal_mca.pt",
-      "fixed_epitope_path": "<PATH_TO_DATA>/data/titan_model/fixed_epitope.pkl"
+      "ckpt": "<PATH_TO_REPO>/data/titan_model/smi_full_fold1_published_code/weights/best_ROC-AUC_bimodal_mca.pt",
+      "fixed_epitope_path": "<PATH_TO_REPO>/data/titan_model/fixed_epitope.pkl"
     }
   },
   "dataset": {
     "dataset_id": "tcr_affinity_smile",
     "dataset_params": {
-      "protein_language_fpath": "<PATH_TO_DATA>/data/titan_model/dataset_files/protein_language.pkl",
-      "affinity_fpath": "<PATH_TO_DATA>/data/titan_model/dataset_files/Interaction_file_valid_reduced.csv",
-      "pep_fpath": "<PATH_TO_DATA>/data/titan_model/dataset_files/epitopes.smi",
-      "protein_fpath": "<PATH_TO_DATA>/data/titan_model/dataset_files/Input_TITAN_full_sequence.csv",
-      "smile_language_fpath": "<PATH_TO_DATA>/data/titan_model/dataset_files/smiles_language.pkl",
+      "protein_language_fpath": "<PATH_TO_REPO>/data/titan_model/dataset_files/protein_language.pkl",
+      "affinity_fpath": "<PATH_TO_REPO>/data/titan_model/dataset_files/Interaction_file_valid_reduced.csv",
+      "pep_fpath": "<PATH_TO_REPO>/data/titan_model/dataset_files/epitopes.smi",
+      "protein_fpath": "<PATH_TO_REPO>/data/titan_model/dataset_files/Input_TITAN_full_sequence.csv",
+      "smile_language_fpath": "<PATH_TO_REPO>/data/titan_model/dataset_files/smiles_language.pkl",
       "setup_params": {
         "augment_smiles": false, "smiles_canonical": false, "ligand_start_stop_token": true,
         "receptor_start_stop_token": true, "ligand_padding_length": 500, "receptor_padding_length": 500,
@@ -233,7 +233,12 @@
         "seed": 123
       },
       "explanation_params": {
-      	"stop_on_first": true
+      	"stop_on_first": false,
+	"threshold": 0.9,
+	"beam_size": 2,
+	"coverage_samples": 1000,
+	"delta": 0.3,
+	"tau": 0.3
       },
       "input_type": "categorical",
       "categorical_alphabet": "blosum_categorical"
