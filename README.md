@@ -63,10 +63,24 @@ pip install intcr/extern/pytoda
 pip install intcr/extern/anarci
 ```
 
+## Basic usage
+
+```bash
+run_interpretability_pipeline --config <PATH_TO_CONFIG_FILE>
+```
+
+or, alternatively, from the repo root directory
+
+```bash
+python bin/run_interpretability_pipeline --config <PATH_TO_CONFIG_FILE>
+```
+
+The `--help` flag can be used to show further options.
+
 ## Tutorials/Submission reproducibility
 
-- [TITAN](here)
-- [pMTnet](here)
+- [TITAN](misc/tutorials/TITAN.md)
+- [pMTnet](misc/tutorials/pMTnet.md)
 
 ## How to customize
 
