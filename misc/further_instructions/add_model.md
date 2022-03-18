@@ -12,7 +12,7 @@ We suggest implementing the loader (and the model, if required) in a file under 
 
 ## Implement the model 
 
-For the pipeline to work, we need a model that exposes a `prepare(self, x)`
+For the pipeline to work, we need a model that exposes a `predict(self, x)`
  function, that takes a *batched* input `x` (a `numpy.array`) and returns predicted *labels* (also `numpy.array` but 1D). 
 If your model already provides this method (e.g. a `scikit` model), you can skip this step and directly [implement the model loader](#implement-the-model-loader).
 
@@ -54,7 +54,7 @@ class TITANFixedEpitopeWrapper:
         return (pred[:, 0] > 0.5).int().detach().cpu().numpy()
 ```
 
-NOTE: that we are doing this because the epitope is fixed and its more memory-efficient to just move around the TCRs. 
+NOTE that we are doing this because the epitope is fixed and its more memory-efficient to just move around the TCRs. 
 However, if the epitope was not fixed, it could be possible to also pass the TCR and the epitope as a single array (if dimensions allow it), and then split them in the predict function.
 
 Unfortunately, the original data format of the TCR is not categorical as it is expected by the `Anchors` algorithm.
