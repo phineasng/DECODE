@@ -66,16 +66,25 @@ pip install intcr/extern/anarci
 ## Basic usage
 
 ```bash
+conda activate decode # if you installed the package in a conda environment
 run_interpretability_pipeline --config <PATH_TO_CONFIG_FILE>
 ```
 
 or, alternatively, from the repo root directory
 
 ```bash
+conda activate decode # if you installed the package in a conda environment
 python bin/run_interpretability_pipeline --config <PATH_TO_CONFIG_FILE>
 ```
 
 The `--help` flag can be used to show further options.
+
+## Understanding input/output files
+
+- [Config file]()
+- [Data preparation outputs]()
+- [Clustering outputs]()
+- [Anchors output]()
 
 ## Tutorials/Submission reproducibility
 
@@ -84,7 +93,10 @@ The `--help` flag can be used to show further options.
 
 ## How to customize
 
-- [Add your own model](tbd)
+NOTE: Our pipeline design should cover most of the use cases. If your use case scenario is not covered (e.g. your input samples have to be a dictionary rather than a simple array), please add an issue to discuss a potential change in the pipeline.
+
+- [Add your own model](misc/further_instructions/add_model.md)
+- [Add a clustering algorithm](tbd)
 - [Add your own dataset](tbd)
 
 ## Cite
