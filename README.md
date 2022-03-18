@@ -24,7 +24,7 @@ If you are having issues on other platforms, please do not hesitate to contact u
 - Clone this repository and access it
 
 ```bash
-git clone --recurse-submodules <LINK2UPDATE> decode
+git clone --recurse-submodules https://github.com/phineasng/DECODE.git decode
 cd decode
 ```
 
@@ -79,7 +79,7 @@ python bin/run_interpretability_pipeline --config <PATH_TO_CONFIG_FILE>
 
 The `--help` flag can be used to show further options.
 
-## Understanding input/output files
+## Overview of the pipeline
 
 - [Config file]()
 - [Data preparation outputs]()
@@ -95,9 +95,9 @@ The `--help` flag can be used to show further options.
 
 NOTE: Our pipeline design should cover most of the use cases. If your use case scenario is not covered (e.g. your input samples have to be a dictionary rather than a simple array), please add an issue to discuss a potential change in the pipeline.
 
+- [Add your own dataset](misc/further_instructions/add_dataset.md)
 - [Add your own model](misc/further_instructions/add_model.md)
 - [Add a clustering algorithm](tbd)
-- [Add your own dataset](tbd)
 
 ## Cite
 
