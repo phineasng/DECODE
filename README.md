@@ -18,6 +18,7 @@ If you are having issues on other platforms, please do not hesitate to contact u
 ### Requirements
 
 - python 3.7
+- pip
 
 ### Install
 
@@ -97,7 +98,7 @@ The `--help` flag can be used to show further options.
     - [Add your own data preprocessing function](misc/further_instructions/add_dataset.md#processing-the-data) 
     - [Define an alphabet for Anchors](misc/further_instructions/add_dataset.md#anchors-alphabet)
 - [Add your own model](misc/further_instructions/add_model.md)
-- [Add a clustering algorithm](tbd)
+- [Add a clustering algorithm](misc/further_instructions/add_clustering_method.md)
 
 NOTE: Our pipeline design should cover most of the use cases, so it should be relatively simple to add your own models/data. 
 If your use case scenario is not covered (e.g. your input samples have to be a dictionary rather than a simple array), please add an issue to discuss a potential change in the pipeline.
