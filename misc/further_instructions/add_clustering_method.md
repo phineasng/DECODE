@@ -107,3 +107,51 @@ To use the method in the pipeline, you can set the corresponding entries:
     ...
   }
 ```
+
+
+## Add a visualization method
+
+To define your own visualization method, the steps are similar to thos for adding a clustering algorithm. 
+Your method should provide a ``fit_transform`` function that is able to project the data to **2D**.
+
+```python
+class YourProjectionModel:
+    def __init__(self, p1, p2, ...):
+    ...
+    def fit_transform(samples):
+        ...
+        return 2d_projected_samples
+```
+
+Then you need to add the model to the corresponding registry in ``intcr/clustering/__init__.py``.
+
+```python
+from where.your.method.is.defined import YourProjectionModel
+
+
+DATA_VISUALIZATION_REGISTRY = {
+    ...
+    'your_proj_model_id': YourProjectionModel
+    ...
+}
+
+```
+
+To use the method in the pipeline, you can set the corresponding entries:
+
+```json
+"clustering": {
+    ...
+    "cluster_visualization": [
+      {
+        "method": "your_proj_model_id",
+              ***
+        "params": { 
+          "p1": ...,
+          "p2": ...
+        }
+      }
+    ],
+    ...
+  }
+```

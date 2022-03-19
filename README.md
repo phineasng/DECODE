@@ -99,6 +99,7 @@ The `--help` flag can be used to show further options.
     - [Define an alphabet for Anchors](misc/further_instructions/add_dataset.md#anchors-alphabet)
 - [Add your own model](misc/further_instructions/add_model.md)
 - [Add a clustering algorithm](misc/further_instructions/add_clustering_method.md)
+    - [Add a clustering scoring method](misc/further_instructions/add_clustering_method.md#add-a-clustering-scoring-method)
 
 NOTE: Our pipeline design should cover most of the use cases, so it should be relatively simple to add your own models/data. 
 If your use case scenario is not covered (e.g. your input samples have to be a dictionary rather than a simple array), please add an issue to discuss a potential change in the pipeline.
