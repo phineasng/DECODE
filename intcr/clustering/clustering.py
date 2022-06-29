@@ -6,7 +6,6 @@ from intcr.clustering import CLUSTERING_ALGOS_REGISTRY, CLUSTERING_EVALUATION_RE
 from intcr.pipeline.utils import load_data, save_data, retrieve_input, generate_preprocessing_instance
 import numpy as np
 from collections import defaultdict
-from ClusterEnsembles import cluster_ensembles
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.spatial.distance import pdist
@@ -174,57 +173,57 @@ def clustering(clustering_root, preclustering_root, config, split_samples, recom
     return clustering_centers, clustering_assignments
 
 
-def consensus_clustering(results_root, assignments, config, recompute=False):
-    if isinstance(config, dict):
-        config = [config]
-
-    # aggregate per split
-    per_split = defaultdict(list)
-    per_split_method_idx = defaultdict(dict)
-    cluster_methods = list()
-
-    for cluster_method, results in assignments.items():
-        idx = 0
-        for split, labels in results.items():
-            per_split[split].append(labels)
-            per_split_method_idx[split][cluster_method] = idx
-            idx = idx + 1
-        cluster_methods.append(cluster_method)
-
-    cluster_methods = sorted(cluster_methods)
-    aggregated = {split: np.stack(labels, axis=0) for split, labels in per_split.items()}
-    consensus_assignments = dict()
-
-    if len(cluster_methods) <= 1:
-        return consensus_assignments
-
-    # run consensus
-    for cfg in config:
-        check_consensus_config(cfg)
-        params = cfg.get(CONSENSUS_PARAMS_KEY, {})
-
-        consensus_name = cfg[CONSENSUS_METHOD_KEY]
-        consensus_assign_path = os.path.join(results_root, '{}_assignments'.format(consensus_name))
-        consensus_meta_path = os.path.join(results_root, '{}.meta'.format(consensus_name))
-
-        if not recompute:
-            split_clusters = retrieve_results(consensus_assign_path)
-            split_meta = sorted(list(retrieve_results(consensus_meta_path)))
-        else:
-            split_clusters = dict()
-            split_meta = list()
-
-        if len(split_clusters) != len(aggregated):
-            for split, labels in aggregated.items():
-                if recompute or split_meta != cluster_methods or split not in split_clusters:
-                    split_clusters[split] = cluster_ensembles(labels, solver=consensus_name, **params)
-
-        consensus_assignments[consensus_name] = split_clusters
-
-        save_data(consensus_assign_path, split_clusters)
-        save_data(consensus_meta_path, split_meta)
-
-    return consensus_assignments
+# def consensus_clustering(results_root, assignments, config, recompute=False):
+#     if isinstance(config, dict):
+#         config = [config]
+#
+#     # aggregate per split
+#     per_split = defaultdict(list)
+#     per_split_method_idx = defaultdict(dict)
+#     cluster_methods = list()
+#
+#     for cluster_method, results in assignments.items():
+#         idx = 0
+#         for split, labels in results.items():
+#             per_split[split].append(labels)
+#             per_split_method_idx[split][cluster_method] = idx
+#             idx = idx + 1
+#         cluster_methods.append(cluster_method)
+#
+#     cluster_methods = sorted(cluster_methods)
+#     aggregated = {split: np.stack(labels, axis=0) for split, labels in per_split.items()}
+#     consensus_assignments = dict()
+#
+#     if len(cluster_methods) <= 1:
+#         return consensus_assignments
+#
+#     # run consensus
+#     for cfg in config:
+#         check_consensus_config(cfg)
+#         params = cfg.get(CONSENSUS_PARAMS_KEY, {})
+#
+#         consensus_name = cfg[CONSENSUS_METHOD_KEY]
+#         consensus_assign_path = os.path.join(results_root, '{}_assignments'.format(consensus_name))
+#         consensus_meta_path = os.path.join(results_root, '{}.meta'.format(consensus_name))
+#
+#         if not recompute:
+#             split_clusters = retrieve_results(consensus_assign_path)
+#             split_meta = sorted(list(retrieve_results(consensus_meta_path)))
+#         else:
+#             split_clusters = dict()
+#             split_meta = list()
+#
+#         if len(split_clusters) != len(aggregated):
+#             for split, labels in aggregated.items():
+#                 if recompute or split_meta != cluster_methods or split not in split_clusters:
+#                     split_clusters[split] = cluster_ensembles(labels, solver=consensus_name, **params)
+#
+#         consensus_assignments[consensus_name] = split_clusters
+#
+#         save_data(consensus_assign_path, split_clusters)
+#         save_data(consensus_meta_path, split_meta)
+#
+#     return consensus_assignments
 
 
 def select_best_clustering(assignments, clustering_root, preclustering_root, config: dict,
