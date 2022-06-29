@@ -9,7 +9,7 @@ from intcr.pipeline.environment import \
 from intcr.clustering import CLUSTERING_KEY, PRECLUST_TRANSFORM_KEY, CLUSTERING_ALGOS_KEY, CONSENSUS_KEY, \
     SELECTION_KEY, VISUALIZATION_KEY
 from intcr.clustering.preprocessing import pre_clustering_transform
-from intcr.clustering.clustering import clustering, consensus_clustering, select_best_clustering, visualize_clusters
+from intcr.clustering.clustering import clustering, select_best_clustering, visualize_clusters
 from intcr.explain.anchors import generate_anchors, evaluate_anchors
 from intcr.explain import EXPLAINER_KEY, ANCHORS_KEY
 from intcr.models.utils import test_model
