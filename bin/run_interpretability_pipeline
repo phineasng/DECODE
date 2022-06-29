@@ -91,13 +91,13 @@ def run_pipeline(config_fpath, step2recompute=100, verbose_level=40, test=False)
                                                       clustering_algos_config, split_samples,
                                                       recompute=(step2recompute <= 2))
     # -- consensus
-    consensus_config = clustering_config.get(CONSENSUS_KEY, [])
-    consensus_assignments = consensus_clustering(clustering_results_root, cluster_assignments, consensus_config,
-                                                 recompute=(step2recompute <= 3))
+    #consensus_config = clustering_config.get(CONSENSUS_KEY, [])
+    #consensus_assignments = consensus_clustering(clustering_results_root, cluster_assignments, consensus_config,
+    #                                             recompute=(step2recompute <= 3))
 
     # -- put results together
     assignments = deepcopy(cluster_assignments)
-    assignments.update(consensus_assignments)
+    #assignments.update(consensus_assignments)
 
     # -- clustering visualization and comparison
     visual_config = clustering_config[VISUALIZATION_KEY]
