@@ -45,7 +45,6 @@ conda activate decode
     
 
 - From the folder of the repository, install `DECODE` and other dependencies.
-The `-e` flag is optional, and suggested only for development.
 ```bash
 pip install -e .
 ```
