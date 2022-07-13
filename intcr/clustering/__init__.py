@@ -6,6 +6,7 @@ from sklearn.manifold import TSNE, SpectralEmbedding, LocallyLinearEmbedding
 from intcr.data.tcr_titan import blosum2levenshtein, blosum_embedding2idx, blosum2nwalign
 from intcr.data.tcr_pmtnet import aatchley2levenshtein, aatchley_pmtnet_embedding2idx
 from sklearn_extra.cluster import KMedoids
+from collections import defaultdict
 
 
 CLUSTERING_KEY = 'clustering'
@@ -39,19 +40,11 @@ CLUSTERING_ALGOS_REGISTRY = {
 }
 
 
-CLUSTERING_ALGOS_CENTERS_GET_FN = {
-    'KMeans': lambda model: None,
+CLUSTERING_ALGOS_CENTERS_GET_FN = defaultdict(lambda: lambda model: None) # by default assume model does not assign centroids
+CLUSTERING_ALGOS_CENTERS_GET_FN.update({
     'KMedoids': lambda model: model.medoid_indices_,
     'DBSCAN': lambda model: model.core_sample_indices_,
-    'MiniBatchKMeans': lambda model: None,
-    'SpectralClustering': lambda model: None,
-    'MeanShift': lambda model: None,
-    'AgglomerativeClustering': lambda model: None,
-    'Birch': lambda model: None,
-    'OPTICS': lambda model: None,
-    'SpectralBiclustering': lambda model: None,
-    'SpectralCoclustering': lambda model: None
-}
+})
 
 
 CLUSTERING_EVALUATION_REGISTRY = {
@@ -60,11 +53,12 @@ CLUSTERING_EVALUATION_REGISTRY = {
     'silhouette': silhouette_score
 }
 
-CLUSTERING_EVALUATION_MULTIPLIER = {
+CLUSTERING_EVALUATION_MULTIPLIER = defaultdict(lambda: 1) # by default maximize score, during selection
+CLUSTERING_EVALUATION_MULTIPLIER.update({
     'davies_bouldin': -1,
     'calinski_harabasz': 1,
     'silhouette': 1
-}
+})
 
 
 DATA_VISUALIZATION_REGISTRY = {
