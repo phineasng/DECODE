@@ -1,9 +1,9 @@
-[submodule "intcr/extern/titan"]
-	path = intcr/extern/titan
+[submodule "extern/titan"]
+	path = extern/titan
 	url = git@github.com:PaccMann/TITAN.git
-[submodule "intcr/extern/pytoda"]
-	path = intcr/extern/pytoda
+[submodule "extern/pytoda"]
+	path = extern/pytoda
 	url = git@github.com:PaccMann/paccmann_datasets.git
-[submodule "intcr/extern/anarci"]
-	path = intcr/extern/anarci
+[submodule "extern/anarci"]
+	path = extern/anarci
 	url = https://github.com/oxpig/ANARCI.git

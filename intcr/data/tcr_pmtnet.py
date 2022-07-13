@@ -7,7 +7,6 @@ from collections import Counter
 from keras import backend as K
 from Levenshtein import distance as lev_dist
 from scipy.spatial.distance import pdist, squareform
-import nwalign3
 
 
 ########################### One Hot ##########################

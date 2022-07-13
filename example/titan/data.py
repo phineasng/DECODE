@@ -203,3 +203,11 @@ def blosum_embedding2idx(samples, *args, **kwargs):
     for sample in samples:
         new_x.append([REVERSE_BLOSUM62_INT[t.astype(np.int).tobytes()] for t in sample])
     return np.stack(new_x, axis=0)
+
+
+CATEGORICAL_ALPHABETS = {
+    'blosum_categorical': BLOSUM_IDX2KEY
+}
+DATASET_GETTERS = {
+    'tcr_affinity_smile': get_aa_tcr_dataset,
+}
