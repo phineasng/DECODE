@@ -36,16 +36,16 @@ def update_dataset_registry(dataset_fpath):
 def update_clustering_registry(clustering_fpath):
     clustering_module = load_module_from_file(clustering_fpath)
 
-    PRE_CLUSTER_TRANSFORM_REGISTRY.update(clustering_module.PRECLUSTER_TRANSFORM)
-    CLUSTERING_ALGOS_REGISTRY.update(clustering_module.CLUSTERING_ALGOS)
-    CLUSTERING_EVALUATION_REGISTRY.update(clustering_module.CLUSTERING_EVALUATORS)
+    PRE_CLUSTER_TRANSFORM_REGISTRY.update(clustering_module.PRE_CLUSTER_TRANSFORM_REGISTRY)
+    CLUSTERING_ALGOS_REGISTRY.update(clustering_module.CLUSTERING_ALGOS_REGISTRY)
+    CLUSTERING_EVALUATION_REGISTRY.update(clustering_module.CLUSTERING_EVALUATION_REGISTRY)
     CLUSTERING_EVALUATION_MULTIPLIER.update(clustering_module.CLUSTERING_EVALUATION_MULTIPLIER)
     CLUSTERING_ALGOS_CENTERS_GET_FN.update(clustering_module.CLUSTERING_ALGOS_CENTERS_GET_FN)
 
 
 def update_visualization_registry(visualization_fpath):
     visualization_module = load_module_from_file(visualization_fpath)
-    DATA_VISUALIZATION_REGISTRY.update(visualization_module.VISUALIZATION_FUNCTIONS)
+    DATA_VISUALIZATION_REGISTRY.update(visualization_module.DATA_VISUALIZATION_REGISTRY)
 
 
 MODULE_FILES_AND_FN = {

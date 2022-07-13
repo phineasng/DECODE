@@ -46,15 +46,15 @@ conda activate decode
 
 - From the folder of the repository, install `DECODE` and other dependencies.
 ```bash
-pip install -e .
+pip install .
 ```
 
-- From the folder of the repository, further install dependencies for TITAN.
+- (optional) From the folder of the repository, further install dependencies for TITAN.
 If the user does not want to install these dependencies, titan files should be removed from the code.
   
 ```bash
-pip install intcr/extern/titan
-pip install intcr/extern/pytoda
+pip install extern/titan
+pip install extern/pytoda
 ```
 
 - (optional) From the folder of the repository, the user can also install additional dependencies to help visualization (i.e. alignment).
@@ -77,6 +77,12 @@ conda activate decode # if you installed the package in a conda environment
 python bin/run_interpretability_pipeline --config <PATH_TO_CONFIG_FILE>
 ```
 
+NOTE: if you customized the pipeline, e.g. by adding your own model, you should make your customization available by adding the flag ``--user_directory``, i.e.
+
+```bash
+conda activate decode # if you installed the package in a conda environment
+run_interpretability_pipeline --config <PATH_TO_CONFIG_FILE> --user_directory YOUR_FOLDER/
+```
 The `--help` flag can be used to show further options.
 
 ## Overview of the pipeline

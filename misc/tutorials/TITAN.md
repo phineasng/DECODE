@@ -5,6 +5,13 @@ the experiment on TITAN reported in our paper.
 
 ## Steps to reproduce the experiment
 
+0. Be sure you installed TITAN's dependencies
+
+```bash
+pip install extern/titan
+pip install extern/pytoda
+```
+
 1. Download the trained model at [https://ibm.box.com/shared/static/g5gfmghuwpg8osr4mljk8zp8uvar9o9e.pt](https://ibm.box.com/shared/static/g5gfmghuwpg8osr4mljk8zp8uvar9o9e.pt)
 2. To use our config file out-of-the-box, place the file at the path
 ```bash
@@ -25,6 +32,6 @@ conda activate decode
 6. Run `DECODE`
 
 ```bash
-run_interpretability_pipeline --config <PATH_TO_REPO>/sample_configs/titan.json
+run_interpretability_pipeline --config <PATH_TO_REPO>/sample_configs/titan.json --user_directory <PATH_TO_REPO>/example/titan
 ```
 

@@ -91,29 +91,23 @@ The expected interface is
 def your_model_loader(model_config, *args, **kwargs):
     # instantiate your model
     ...
+    return model
 ```
 
 `model_config` is a dictionary containing the parameters to construct your model. 
-If you are working with a `torch` model, you can define your loader as
 
-```python
-def your_model_loader(model_config, device, *args, **kwargs):
-    # instantiate your model
-    ...
-```
-
-to have access to the device where to load the model.
+The model loader should be defined in the python file called `model.py` in a folder of your choice. 
+This folder (which we will call `YOUR_FOLDER/` for the remainder of the instructions) should contain all your customization files, i.e. a folder containing the files `clustering.py` (as defined [here](./add_clustering_method.md)), `clustering.py` (as defined [here](./add_clustering_method.md)), etc..
+You can find a template of the folder structure and files that you can customize in `decode/example/template/`.
 
 Now that you implemented the loader, you just need to add it to the model registry.
-To do this, simply add the model loader in `intcr/models/__init__.py`:
+To do this, simply add the model loader in `model.py`:
 
 ```python
-from intcr.models.your_model import your_model_loader
+...
 
 MODEL_LOADERS = {
-    ...
     'your_model_loader_id': your_model_loader
-    ...
 }
 ```
 

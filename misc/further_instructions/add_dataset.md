@@ -18,16 +18,17 @@ def your_dataset_loader(dataset_params):
 `X` should be a `numpy.array` that has the shape expected by the model to interpret. 
 `y` should be a 1D array containing the labels. The user can actually return `None` instead of `y` since most the pipeline does not use this information.
 Note however that in this case it would not be possible to run the testing routine with the flag `--test`.
+The dataset loader should be defined in the python file called `data.py` in a folder of your choice. 
+This folder (which we will call `YOUR_FOLDER/` for the remainder of the instructions) should contain all your customization files, i.e. a folder containing the files `model.py` (as defined [here](./add_model.md)), `clustering.py` (as defined [here](./add_clustering_method.md)), etc..
+You can find a template of the folder structure and files that you can customize in `decode/example/template/`.
 
-The loader should then be made available to use in ``DECODE`` by adding it to the dataloader registry in `intcr/data/__init__.py`
+The loader should then be made available to use in ``DECODE`` by adding it to the dataloader registry in `dataset.py`
 
 ```python
-from intcr.data.your_dataset import your_dataset_loader
+...
 
 DATASET_GETTERS = {
-    ...
     'your_dataset_id': your_dataset_loader,
-    ...
 }
 ```
 
@@ -53,6 +54,9 @@ def your_data_processor(samples, *args, **kwargs):
     return transformed_samples
 ```
 
+NOTE: the data processor should be defined in ``clustering.py``
+
+
 Minimally, the data processing function should take the ``samples`` to transform, which are in the same format as the input returned by the dataset loader.
 However, in the pipeline the function will be called also passing the model. Therefore, the user can have access to the model if the data processor is defined as
 
@@ -65,15 +69,13 @@ def your_data_processor(samples, model, *args, **kwargs):
 This can be useful if, for example, you want to use a representation of the data from a hidden layer of a neural network model.
 ``transformed samples`` can also be a distance matrix.
 
-The data processor can then be added to the corresponding registry in ``intcr/clustering/__init__.py``
+The data processor can then be added to the corresponding registry in ``clustering.py``
 
 ```python
-from where.your.processor.is.defined import your_data_processor
+...
 
 PRE_CLUSTER_TRANSFORM_REGISTRY = {
-    ...
     'your_data_processor_id': your_data_processor
-    ...
 }
 ```
 
@@ -100,7 +102,7 @@ It can be any name of choice of the user. More details can be found in the  [ove
 
 ``Anchors`` expects categorical inputs. 
 If a dataset does not natively provide categorical inputs a preprocessing function should be [implemented](#processing-the-data) to turn
-the original inputs to categorically encoded ones. An example for ``TITAN`` is the function `blosum_emb2categorical` in `intcr/data/tcr_titan.py` that turns BLOSUM embeddings to categorical variables.
+the original inputs to categorically encoded ones. An example for ``TITAN`` is the function `blosum_emb2categorical` in `example/titan/data.py` that turns BLOSUM embeddings to categorical variables.
 
 To perform the perturbations, ``Anchors`` also needs to have access to the alphabet. The alphabet is a dictionary mapping the categorical values to their "string meaning", e.g. an amino-acid or nucleotide. 
 
@@ -115,7 +117,7 @@ alphabet = {
 ```
 
 This can be usually hardcoded somewhere in your code. You just need to make it accessible 
-to ``Anchors`` by adding it to the alphabet registry in `intcr/data/__init__.py`
+to ``Anchors`` by adding it to the alphabet registry in `data.py`
 
 ```python
 from where.your.alphabet.is.defined import your_alphabet
