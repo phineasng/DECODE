@@ -1,5 +1,5 @@
-from keras.layers import Input,Dense,concatenate,Dropout
-from keras.models import Model,load_model
+from keras.layers import Input, Dense, concatenate, Dropout
+from keras.models import Model, load_model
 from intcr.data.tcr_pmtnet import pearson_correlation_f
 import pandas as pd
 import numpy as np

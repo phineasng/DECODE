@@ -3,7 +3,7 @@ from sklearn.cluster import (KMeans, DBSCAN, MiniBatchKMeans,
                              Birch, OPTICS, SpectralBiclustering, SpectralCoclustering)
 from sklearn.metrics import davies_bouldin_score, calinski_harabasz_score, silhouette_score
 from sklearn.manifold import TSNE, SpectralEmbedding, LocallyLinearEmbedding
-from intcr.data.tcr_titan import blosum2levenshtein, blosum_embedding2idx, blosum2nwalign
+from example.titan.data import blosum2levenshtein, blosum_embedding2idx, blosum2nwalign
 from intcr.data.tcr_pmtnet import aatchley2levenshtein, aatchley_pmtnet_embedding2idx
 from sklearn_extra.cluster import KMedoids
 from collections import defaultdict

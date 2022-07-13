@@ -1,13 +1,15 @@
 from intcr import (
     MODEL_LOADERS,
     DATASET_GETTERS,
+    CATEGORICAL_ALPHABETS,
     DATA_VISUALIZATION_REGISTRY,
     CLUSTERING_EVALUATION_REGISTRY,
     CLUSTERING_ALGOS_REGISTRY,
     PRE_CLUSTER_TRANSFORM_REGISTRY,
     CLUSTERING_ALGOS_CENTERS_GET_FN,
-    CLUSTERING_EVALUATION_MULTIPLIER
+    CLUSTERING_EVALUATION_MULTIPLIER,
 )
+import sys
 import os
 from importlib import machinery, util
 
@@ -28,6 +30,7 @@ def update_model_registry(models_fpath):
 def update_dataset_registry(dataset_fpath):
     dataset_module = load_module_from_file(dataset_fpath)
     DATASET_GETTERS.update(dataset_module.DATASET_GETTERS)
+    CATEGORICAL_ALPHABETS.update(dataset_module.CATEGORICAL_ALPHABETS)
 
 
 def update_clustering_registry(clustering_fpath):
@@ -42,7 +45,6 @@ def update_clustering_registry(clustering_fpath):
 
 def update_visualization_registry(visualization_fpath):
     visualization_module = load_module_from_file(visualization_fpath)
-
     DATA_VISUALIZATION_REGISTRY.update(visualization_module.VISUALIZATION_FUNCTIONS)
 
 
@@ -55,7 +57,9 @@ MODULE_FILES_AND_FN = {
 
 
 def update_registries(user_directory=None):
+    sys.path.append(user_directory)
     for fname, update_fn in MODULE_FILES_AND_FN.items():
         fpath = os.path.join(user_directory, fname)
         if os.path.exists(fpath):
             update_fn(fpath)
+    sys.path.pop()

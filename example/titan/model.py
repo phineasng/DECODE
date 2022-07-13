@@ -2,8 +2,7 @@ import torch
 import numpy as np
 from intcr.pipeline.utils import load_data
 from paccmann_predictor.models import MODEL_FACTORY
-from intcr.data.tcr_titan import BLOSUM_IDX2KEY, BLOSUM62
-from intcr.pipeline.logging import _CURRENT_LOGGER
+from data import BLOSUM_IDX2KEY, BLOSUM62
 
 
 class TITANFixedEpitopeWrapper:
@@ -35,7 +34,8 @@ class TITANFixedEpitopeWrapper:
         return (pred[:, 0] > 0.5).int().detach().cpu().numpy()
 
 
-def load_titan_fixed_epitope(model_config, device=torch.device('cpu')):
+def load_titan_fixed_epitope(model_config):
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
     model_params = model_config['params']
     model_ckpt = model_config['ckpt']
     model = MODEL_FACTORY['bimodal_mca'](model_params).to(device)
@@ -43,3 +43,7 @@ def load_titan_fixed_epitope(model_config, device=torch.device('cpu')):
     model = TITANFixedEpitopeWrapper(model, device, model_config['fixed_epitope_path'])
     return model
 
+
+MODEL_LOADERS = {
+    'titan_fixed_epitope': load_titan_fixed_epitope,
+}
