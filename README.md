@@ -114,6 +114,19 @@ If your use case scenario is not covered (e.g. your input samples have to be a d
 If you are using our work, please cite us.  
 
 ```
-@{tbd
+@article{decode22,
+    author = {Papadopoulou, Iliana and Nguyen, An-Phi and Weber, Anna and Martínez, María Rodríguez},
+    title = "{DECODE: a computational pipeline to discover T cell receptor binding rules}",
+    journal = {Bioinformatics},
+    volume = {38},
+    number = {Supplement_1},
+    pages = {i246-i254},
+    year = {2022},
+    month = {06},
+    abstract = "{Understanding the mechanisms underlying T cell receptor (TCR) binding is of fundamental importance to understanding adaptive immune responses. A better understanding of the biochemical rules governing TCR binding can be used, e.g. to guide the design of more powerful and safer T cell-based therapies. Advances in repertoire sequencing technologies have made available millions of TCR sequences. Data abundance has, in turn, fueled the development of many computational models to predict the binding properties of TCRs from their sequences. Unfortunately, while many of these works have made great strides toward predicting TCR specificity using machine learning, the black-box nature of these models has resulted in a limited understanding of the rules that govern the binding of a TCR and an epitope.We present an easy-to-use and customizable computational pipeline, DECODE, to extract the binding rules from any black-box model designed to predict the TCR-epitope binding. DECODE offers a range of analytical and visualization tools to guide the user in the extraction of such rules. We demonstrate our pipeline on a recently published TCR-binding prediction model, TITAN, and show how to use the provided metrics to assess the quality of the computed rules. In conclusion, DECODE can lead to a better understanding of the sequence motifs that underlie TCR binding. Our pipeline can facilitate the investigation of current immunotherapeutic challenges, such as cross-reactive events due to off-target TCR binding.Code is available publicly at https://github.com/phineasng/DECODE.Supplementary data are available at Bioinformatics online.}",
+    issn = {1367-4803},
+    doi = {10.1093/bioinformatics/btac257},
+    url = {https://doi.org/10.1093/bioinformatics/btac257},
+    eprint = {https://academic.oup.com/bioinformatics/article-pdf/38/Supplement\_1/i246/44269455/btac257.pdf},
 }
 ```
