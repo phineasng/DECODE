@@ -5,10 +5,12 @@ To include your own model, the most straightforward ways is to implement 2 compo
 1. The model itself (possibly unnecessary) - [instructions](#implement-the-model)
 2. A model loader - [instructions](#implement-the-model-loader)
 
-Then the loader should be added to the model registry: more details are given below.
-We will use the `TITAN` model as a working example. 
+The model and model loader should be defined in the python file called `model.py` in a folder of your choice. 
+This folder (which we will call `YOUR_FOLDER/` for the remainder of the instructions) should contain all your (optional) customization files, e.g. the files `clustering.py` (as defined [here](./add_clustering_method.md)), `data.py` (as defined [here](./add_dataset.md)), etc..
+You can find a template of the folder structure and files that you can customize in `decode/example/template/`.
 
-We suggest implementing the loader (and the model, if required) in a file under `intcr/models`, e.g. `intcr/model/titan.py`.
+We will use the `TITAN` model as a working example. 
+You can find this implementation in `decode/example/titan/`.
 
 ## Implement the model 
 
@@ -95,10 +97,6 @@ def your_model_loader(model_config, *args, **kwargs):
 ```
 
 `model_config` is a dictionary containing the parameters to construct your model. 
-
-The model loader should be defined in the python file called `model.py` in a folder of your choice. 
-This folder (which we will call `YOUR_FOLDER/` for the remainder of the instructions) should contain all your customization files, i.e. a folder containing the files `clustering.py` (as defined [here](./add_clustering_method.md)), `clustering.py` (as defined [here](./add_clustering_method.md)), etc..
-You can find a template of the folder structure and files that you can customize in `decode/example/template/`.
 
 Now that you implemented the loader, you just need to add it to the model registry.
 To do this, simply add the model loader in `model.py`:
